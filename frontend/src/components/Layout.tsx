@@ -1,0 +1,15 @@
+import { Outlet } from 'react-router-dom';
+import { Navbar } from './Navbar';
+import { Toaster } from 'sonner';
+
+export const Layout = () => {
+  return (
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black">
+      <Toaster position="top-right" expand={true} theme="dark" />
+      <Navbar />
+      <main className="flex-grow container mx-auto px-4 md:px-0 pt-24">
+        <Outlet />
+      </main>
+    </div>
+  );
+};

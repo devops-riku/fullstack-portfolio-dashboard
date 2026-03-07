@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080" # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: riku0224
+      POSTGRES_DB: portfolio
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:riku0224@db:5432/portfolio
+      - SECRET_KEY=@Riku0224!
+      - API_PREFIX=/api
+      - ENVIRONMENT=development
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c " if [ ! -f .env ]; then
+        echo 'DATABASE_URL=postgresql+asyncpg://postgres:riku0224@localhost:5432/portfolio' > .env
+        echo 'SECRET_KEY=@Riku0224!' >> .env
+        echo 'API_PREFIX=/api' >> .env
+        echo 'ENVIRONMENT=development' >> .env
+        echo 'GEMINI_API_KEY=your_gemini_api_key_here' >> .env
+        echo 'Created missing .env file for local development!'
+      fi && alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload "
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`eric.linkerx.dev`) && PathPrefix(`/api`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+
+  frontend:
+    build:
+      context: ./frontend
+    # ports:
+    #   - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`eric.linkerx.dev`) && PathPrefix(`/`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=5173"
+
+volumes:
+  postgres_data:
