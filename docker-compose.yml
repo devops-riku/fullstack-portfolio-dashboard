@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15-alpine
     env_file:
-      - path: .env.docker
+      - path: backend/.env.docker
         required: false
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./backend:/app
     env_file:
-      - path: .env.docker
+      - path: backend/.env.docker
         required: false
 
     depends_on:
@@ -51,7 +51,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     env_file:
-      - path: .env.docker
+      - path: backend/.env.docker
         required: false
     depends_on:
       - backend
