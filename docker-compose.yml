@@ -9,9 +9,7 @@ services:
     container_name: portfolio_db
     restart: always
     env_file:
-      - .env.example
-      - path: .env
-        required: false
+      - .env
     ports:
       - "5433:5432"
     volumes:
@@ -38,9 +36,7 @@ services:
       - ./backend:/app
       - .:/project_root
     env_file:
-      - .env.example
-      - path: .env
-        required: false
+      - .env
     depends_on:
       db:
         condition: service_healthy
@@ -71,9 +67,7 @@ services:
     # ports:
     #   - "80:80" # Disabled to avoid conflict with host's Traefik/Nginx. Traefik handles this via networks.
     env_file:
-      - .env.example
-      - path: .env
-        required: false
+      - .env
     depends_on:
       - api
     networks:

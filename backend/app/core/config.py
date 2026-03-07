@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import model_validator
+from pydantic import model_validator, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -23,10 +23,22 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    @field_validator("POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_DB", "DB_HOST", "DB_PORT", mode="before")
+    @classmethod
+    def strip_whitespace(cls, v):
+        if isinstance(v, str):
+            return v.strip()
+        return v
+
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "Settings":
         if not self.DATABASE_URL:
             self.DATABASE_URL = f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
+        
+        # Safe debug print for startup
+        safe_url = self.DATABASE_URL.replace(self.POSTGRES_PASSWORD, "****")
+        print(f"Connecting to Database with: {safe_url}")
+        
         return self
 
 settings = Settings()
