@@ -2,8 +2,8 @@ services:
   db:
     image: postgres:15-alpine
     env_file:
-      - path: backend/.env.docker.example
-      - path: backend/.env.docker
+      - path: .env.example
+      - path: .env
         required: false
     ports:
       - "5432:5432"
@@ -22,9 +22,10 @@ services:
     #   - "8000:8000"
     volumes:
       - ./backend:/app
+      - .:/project_root
     env_file:
-      - path: backend/.env.docker.example
-      - path: backend/.env.docker
+      - path: .env.example
+      - path: .env
         required: false
 
     depends_on:
@@ -49,8 +50,8 @@ services:
       - ./frontend:/app
       - /app/node_modules
     env_file:
-      - path: backend/.env.docker.example
-      - path: backend/.env.docker
+      - path: .env.example
+      - path: .env
         required: false
     depends_on:
       - backend
