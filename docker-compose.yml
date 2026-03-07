@@ -1,77 +1,102 @@
+version: "3.9"
+
 services:
+  # =========================
+  # Database (PRIVATE)
+  # =========================
   db:
     image: postgres:15-alpine
+    container_name: portfolio_db
+    restart: always
     env_file:
-      - path: .env.example
+      - .env.example
       - path: .env
         required: false
-    ports:
-      - "5432:5432"
+    # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB are loaded from .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio-internal
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
 
-  backend:
+  # =========================
+  # API (Backend)
+  # =========================
+  api:
     build:
       context: ./backend
-    # ports:
-    #   - "8000:8000"
+    container_name: portfolio_api
+    restart: always
     volumes:
       - ./backend:/app
       - .:/project_root
     env_file:
-      - path: .env.example
+      - .env.example
       - path: .env
         required: false
-
     depends_on:
       db:
         condition: service_healthy
     command: sh /app/entrypoint.sh sh -c "alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
-      - default
-      - traefik_network
+      - traefik-proxy
+      - portfolio-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/api\")"
-      - "traefik.http.routers.backend.entrypoints=web,websecure"
-      - "traefik.http.routers.backend.tls=true"
-      - "traefik.docker.network=traefik_network"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.portfolio-api.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.portfolio-api.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-api.tls=true"
+      - "traefik.http.routers.portfolio-api.priority=100"
+      - "traefik.docker.network=asseqr-system_app-network"
+      - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
 
+  # =========================
+  # Frontend
+  # =========================
   frontend:
     build:
       context: ./frontend
-    # ports:
-    #   - "5173:5173"
+    container_name: portfolio_frontend
+    restart: always
     volumes:
       - ./frontend:/app
       - /app/node_modules
     env_file:
-      - path: .env.example
+      - .env.example
       - path: .env
         required: false
     depends_on:
-      - backend
+      - api
     networks:
-      - default
-      - traefik_network
+      - traefik-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/\")"
-      - "traefik.http.routers.frontend.entrypoints=web,websecure"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.docker.network=traefik_network"
-      - "traefik.http.services.frontend.loadbalancer.server.port=5173"
+      - "traefik.http.routers.portfolio-frontend.rule=Host(`${HOST:-localhost}`)"
+      - "traefik.http.routers.portfolio-frontend.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-frontend.tls=true"
+      - "traefik.http.routers.portfolio-frontend.priority=10"
+      - "traefik.docker.network=asseqr-system_app-network"
+      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=5173"
 
+# =========================
+# Networks
+# =========================
+networks:
+  # Shared Traefik network (from asseqr-system)
+  traefik-proxy:
+    external: true
+    name: asseqr-system_app-network
+
+  # Private internal network
+  portfolio-internal:
+    driver: bridge
+
+# =========================
+# Volumes
+# =========================
 volumes:
   postgres_data:
-
-
-networks:
-  traefik_network:
-    external: true
