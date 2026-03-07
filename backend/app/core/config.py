@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     DB_HOST: str = "db"
     DB_PORT: str = "5432"
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_PASSWORD: str = "riku"
     POSTGRES_DB: str = "portfolio"
 
     DATABASE_URL: Optional[str] = None
