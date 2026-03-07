@@ -4,6 +4,10 @@ services:
     env_file:
       - path: .env.docker
         required: false
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-riku0224}
+      - POSTGRES_DB=${POSTGRES_DB:-portfolio}
     ports:
       - "5432:5432"
     volumes:
