@@ -1,13 +1,17 @@
-import { fileURLToPath, URL } from "node:url"
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
+import path from "path"
+import { fileURLToPath } from "url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig({
   plugins: [react()],
-  
+
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@": path.resolve(__dirname, "src"),
     },
   },
 
@@ -21,7 +25,7 @@ export default defineConfig({
 
     proxy: {
       "/api": {
-        target: "http://backend:8000", // docker service name
+        target: "http://api:8000", // docker service name
         changeOrigin: true,
         secure: false,
       },
