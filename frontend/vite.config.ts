@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: [
+      'eric.linkerx.dev'
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
