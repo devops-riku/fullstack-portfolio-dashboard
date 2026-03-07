@@ -1,4 +1,5 @@
 from typing import Optional
+from urllib.parse import quote_plus
 from pydantic import model_validator, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -33,10 +34,13 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "Settings":
         if not self.DATABASE_URL:
-            self.DATABASE_URL = f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
+            # We must quote the user and password to handle special characters like '@' or '!'
+            user = quote_plus(self.POSTGRES_USER)
+            password = quote_plus(self.POSTGRES_PASSWORD)
+            self.DATABASE_URL = f"postgresql+asyncpg://{user}:{password}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
         
         # Safe debug print for startup
-        safe_url = self.DATABASE_URL.replace(self.POSTGRES_PASSWORD, "****")
+        safe_url = self.DATABASE_URL.replace(quote_plus(self.POSTGRES_PASSWORD), "****")
         print(f"Connecting to Database with: {safe_url}")
         
         return self
