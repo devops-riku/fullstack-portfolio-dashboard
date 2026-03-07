@@ -2,7 +2,8 @@ services:
   db:
     image: postgres:15-alpine
     env_file:
-      - .env.docker
+      - path: .env.docker
+        required: false
     ports:
       - "5432:5432"
     volumes:
@@ -21,7 +22,8 @@ services:
     volumes:
       - ./backend:/app
     env_file:
-      - .env.docker
+      - path: .env.docker
+        required: false
 
     depends_on:
       db:
@@ -32,7 +34,7 @@ services:
       - traefik_network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${HOST}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/api`)"
       - "traefik.docker.network=traefik_network"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"
 
@@ -45,7 +47,8 @@ services:
       - ./frontend:/app
       - /app/node_modules
     env_file:
-      - .env.docker
+      - path: .env.docker
+        required: false
     depends_on:
       - backend
     networks:
@@ -53,7 +56,7 @@ services:
       - traefik_network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${HOST}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/`)"
       - "traefik.docker.network=traefik_network"
       - "traefik.http.services.frontend.loadbalancer.server.port=5173"
 
