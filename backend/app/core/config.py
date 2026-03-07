@@ -17,7 +17,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     GEMINI_API_KEY: str | None = None
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=(".env", ".env.docker"), 
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "Settings":
