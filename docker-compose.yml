@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   # =========================
   # Database (PRIVATE)
@@ -57,18 +59,17 @@ services:
       - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
 
   # =========================
-  # Frontend
+  # Frontend (Nginx Production Build)
   # =========================
   frontend:
     build:
       context: ./frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL:-/api}
     container_name: portfolio_frontend
     restart: always
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - "80:80"
     env_file:
       - .env.example
       - path: .env
@@ -85,7 +86,7 @@ services:
       - "traefik.http.routers.portfolio-frontend.tls=true"
       - "traefik.http.routers.portfolio-frontend.priority=10"
       - "traefik.docker.network=asseqr-system_app-network"
-      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=5173"
+      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=80"
 
 # =========================
 # Networks

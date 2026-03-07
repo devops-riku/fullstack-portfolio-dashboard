@@ -1,10 +1,6 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
-import path from "path"
 import { fileURLToPath } from "url"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 export default defineConfig({
   plugins: [react()],
@@ -16,27 +12,4 @@ export default defineConfig({
     extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
   },
 
-  server: {
-    host: true,
-    port: 5173,
-
-    allowedHosts: [
-      "eric.linkerx.dev",
-      "localhost",
-      "127.0.0.1",
-      "0.0.0.0"
-    ],
-
-    proxy: {
-      "/api": {
-        target: "http://api:8000", // docker service name
-        changeOrigin: true,
-        secure: false,
-      },
-    },
-
-    watch: {
-      usePolling: true // fixes docker file watching
-    }
-  }
 })
