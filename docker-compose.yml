@@ -68,8 +68,8 @@ services:
         - VITE_API_URL=${VITE_API_URL:-/api}
     container_name: portfolio_frontend
     restart: always
-    ports:
-      - "80:80"
+    # ports:
+    #   - "80:80" # Disabled to avoid conflict with host's Traefik/Nginx. Traefik handles this via networks.
     env_file:
       - .env.example
       - path: .env
