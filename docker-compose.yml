@@ -1,7 +1,8 @@
-version: "3.9"
-
 services:
 
+  # =========================
+  # API (Backend)
+  # =========================
   api:
     build:
       context: ./backend
@@ -21,14 +22,22 @@ services:
     networks:
       - traefik-proxy
       - portfolio-internal
+
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=asseqr-main_app-network"
+
       - "traefik.http.routers.portfolio-api.rule=Host(`eric.linkerx.dev`) && PathPrefix(`/api`)"
       - "traefik.http.routers.portfolio-api.entrypoints=websecure"
       - "traefik.http.routers.portfolio-api.tls=true"
-      - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
-      - "traefik.docker.network=asseqr-system_app-network"
+      - "traefik.http.routers.portfolio-api.priority=100"
 
+      - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
+
+
+  # =========================
+  # Frontend
+  # =========================
   frontend:
     build:
       context: ./frontend
@@ -40,14 +49,22 @@ services:
       - api
     networks:
       - traefik-proxy
+
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=asseqr-main_app-network"
+
       - "traefik.http.routers.portfolio-frontend.rule=Host(`eric.linkerx.dev`)"
       - "traefik.http.routers.portfolio-frontend.entrypoints=websecure"
       - "traefik.http.routers.portfolio-frontend.tls=true"
-      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=80"
-      - "traefik.docker.network=asseqr-system_app-network"
+      - "traefik.http.routers.portfolio-frontend.priority=10"
 
+      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=80"
+
+
+  # =========================
+  # Postgres (PRIVATE)
+  # =========================
   db:
     image: postgres:15-alpine
     container_name: portfolio_db
@@ -60,6 +77,7 @@ services:
       - portfolio_pgdata:/var/lib/postgresql/data
     networks:
       - portfolio-internal
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U rikudev -d portfolio_db"]
       interval: 10s
@@ -67,14 +85,23 @@ services:
       retries: 5
 
 
+# =========================
+# Networks
+# =========================
 networks:
+
+  # Shared Traefik network
   traefik-proxy:
     external: true
-    name: asseqr-system_app-network
+    name: asseqr-main_app-network
 
+  # Private network for API + DB
   portfolio-internal:
     driver: bridge
 
 
+# =========================
+# Volumes
+# =========================
 volumes:
   portfolio_pgdata:
