@@ -12,9 +12,10 @@ services:
       - .env.example
       - path: .env
         required: false
-    # POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB are loaded from .env
+    ports:
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - portfolio_pgdata:/var/lib/postgresql/data
     networks:
       - portfolio-internal
     healthcheck:
@@ -31,6 +32,8 @@ services:
       context: ./backend
     container_name: portfolio_api
     restart: always
+    ports:
+      - "8000:8000"
     volumes:
       - ./backend:/app
       - .:/project_root
@@ -43,11 +46,12 @@ services:
         condition: service_healthy
     command: sh /app/entrypoint.sh sh -c "alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
+      - default
       - traefik-proxy
       - portfolio-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portfolio-api.rule=Host(`${HOST:-localhost}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.portfolio-api.rule=Host(`${HOST:-eric.linkerx.dev}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.portfolio-api.entrypoints=websecure"
       - "traefik.http.routers.portfolio-api.tls=true"
       - "traefik.http.routers.portfolio-api.priority=100"
@@ -62,6 +66,8 @@ services:
       context: ./frontend
     container_name: portfolio_frontend
     restart: always
+    ports:
+      - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -72,10 +78,11 @@ services:
     depends_on:
       - api
     networks:
+      - default
       - traefik-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portfolio-frontend.rule=Host(`${HOST:-localhost}`)"
+      - "traefik.http.routers.portfolio-frontend.rule=Host(`${HOST:-eric.linkerx.dev}`)"
       - "traefik.http.routers.portfolio-frontend.entrypoints=websecure"
       - "traefik.http.routers.portfolio-frontend.tls=true"
       - "traefik.http.routers.portfolio-frontend.priority=10"
@@ -99,4 +106,4 @@ networks:
 # Volumes
 # =========================
 volumes:
-  postgres_data:
+  portfolio_pgdata:

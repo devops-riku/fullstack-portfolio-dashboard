@@ -21,7 +21,10 @@ export default defineConfig({
     port: 5173,
 
     allowedHosts: [
-      "eric.linkerx.dev"
+      "eric.linkerx.dev",
+      "localhost",
+      "127.0.0.1",
+      "0.0.0.0"
     ],
 
     proxy: {
