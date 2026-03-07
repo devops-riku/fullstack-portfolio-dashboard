@@ -1,13 +1,12 @@
 from typing import Optional
-from urllib.parse import quote_plus
-from pydantic import model_validator, field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # Database configuration (required, no defaults)
+    # Database settings
     DB_HOST: str = "db"
-    DB_PORT: str = "5432"
+    DB_PORT: int = 5432
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
@@ -23,7 +22,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
 
     model_config = SettingsConfigDict(
-        env_file=("/app/.env", ".env"),  # Docker + local support
+        env_file=("/app/.env", ".env"),
         env_file_encoding="utf-8",
         extra="ignore"
     )
@@ -33,7 +32,6 @@ class Settings(BaseSettings):
         "POSTGRES_PASSWORD",
         "POSTGRES_DB",
         "DB_HOST",
-        "DB_PORT",
         mode="before"
     )
     @classmethod
@@ -45,18 +43,13 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def assemble_db_connection(self) -> "Settings":
         if not self.DATABASE_URL:
-            user = quote_plus(self.POSTGRES_USER)
-            password = quote_plus(self.POSTGRES_PASSWORD)
-
             self.DATABASE_URL = (
-                f"postgresql+asyncpg://{user}:{password}"
+                f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
                 f"@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
             )
 
-        # Safe debug output
-        masked_password = quote_plus(self.POSTGRES_PASSWORD)
-        safe_url = self.DATABASE_URL.replace(masked_password, "****")
-
+        # Safe debug print
+        safe_url = self.DATABASE_URL.replace(self.POSTGRES_PASSWORD, "****")
         print(f"Connecting to Database with: {safe_url}")
 
         return self
