@@ -72,7 +72,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: riku
     volumes:
-      - portfolio_pgdata:/var/lib/postgresql/data
+      - portfolio_pgdata_v2:/var/lib/postgresql/data
     networks:
       - portfolio-internal
 
@@ -99,4 +99,4 @@ networks:
 # Volumes
 # =========================
 volumes:
-  portfolio_pgdata:
+  portfolio_pgdata_v2:
