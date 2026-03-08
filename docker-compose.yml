@@ -34,7 +34,6 @@ services:
 
       - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
 
-
   # =========================
   # Frontend
   # =========================
@@ -48,7 +47,7 @@ services:
     depends_on:
       - api
     networks:
-      - traefik-proxy      
+      - traefik-proxy
 
     labels:
       - "traefik.enable=true"
@@ -60,7 +59,6 @@ services:
       - "traefik.http.routers.portfolio-frontend.priority=10"
 
       - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=80"
-
 
   # =========================
   # Postgres (PRIVATE)
@@ -79,11 +77,10 @@ services:
       - portfolio-internal
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U rikudev -d portfolio_db"]
+      test: [ "CMD-SHELL", "pg_isready -U rikudev -d portfolio_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
-
 
 # =========================
 # Networks
@@ -92,13 +89,11 @@ networks:
   # Shared Traefik network (from App 1)
   traefik-proxy:
     external: true
-    name: asseqr-system_app-network
-    
+    name: asseqr-main_app-network
 
   # Private network for API + DB
   portfolio-internal:
     driver: bridge
-
 
 # =========================
 # Volumes
