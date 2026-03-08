@@ -8,11 +8,11 @@ from typing import List
 
 router = APIRouter()
 
-@router.get("/", response_model=List[SkillResponse])
+@router.get("", response_model=List[SkillResponse])
 async def get_skills(db: AsyncSession = Depends(get_db)):
     return await SkillService.get_skills(db)
 
-@router.post("/", response_model=SkillResponse)
+@router.post("", response_model=SkillResponse)
 async def create_skill(
     skill: SkillCreate, 
     db: AsyncSession = Depends(get_db),

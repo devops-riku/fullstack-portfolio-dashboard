@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8000/api/skills';
+import { apiClient } from '../../api/client';
 
 export interface Skill {
     id: number;
@@ -16,29 +14,20 @@ export interface SkillCreate {
 }
 
 export const getSkills = async (): Promise<Skill[]> => {
-    const response = await axios.get(API_URL);
+    const response = await apiClient.get('/skills');
     return response.data;
 };
 
 export const createSkill = async (skill: SkillCreate): Promise<Skill> => {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(API_URL, skill, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await apiClient.post('/skills', skill);
     return response.data;
 };
 
 export const deleteSkill = async (id: number): Promise<void> => {
-    const token = localStorage.getItem('token');
-    await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    await apiClient.delete(`/skills/${id}`);
 };
 
 export const updateSkill = async (id: number, skill: SkillCreate): Promise<Skill> => {
-    const token = localStorage.getItem('token');
-    const response = await axios.put(`${API_URL}/${id}`, skill, {
-        headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await apiClient.put(`/skills/${id}`, skill);
     return response.data;
 };
