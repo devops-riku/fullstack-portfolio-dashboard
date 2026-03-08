@@ -1,11 +1,11 @@
-import { Terminal, Github, Linkedin, Mail, User, Loader2, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import { Terminal, Github, Linkedin, Mail, User, Loader2, Image as ImageIcon, ExternalLink, Maximize2, X } from 'lucide-react';
 import { Icon } from '@iconify/react';
 import { useEffect, useState } from 'react';
 import { getProjects, type Project } from '../../projects/api';
 import { getExperiences, type Experience } from '../../experience/api';
 import { getSkills, type Skill } from '../../skills/api';
 import { getProfile, type Profile as UserProfile } from '../../portfolio/profileApi';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +17,7 @@ export const Portfolio = () => {
     const [skills, setSkills] = useState<Skill[]>([]);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -115,7 +116,7 @@ export const Portfolio = () => {
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 px-1">Tech Stack</h2>
 
                     <div className="space-y-10">
-                        {Array.from(new Set(skills.map(s => s.category || 'other'))).map(catId => {
+                        {Array.isArray(skills) && Array.from(new Set(skills.map(s => s.category || 'other'))).map(catId => {
                             const catSkills = skills.filter(s => (s.category || 'other') === catId);
                             if (catSkills.length === 0) return null;
 
@@ -156,7 +157,7 @@ export const Portfolio = () => {
                         })}
                     </div>
 
-                    {skills.length === 0 && (
+                    {(!Array.isArray(skills) || skills.length === 0) && (
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Waiting for tools...</p>
                     )}
                 </motion.section>
@@ -171,20 +172,35 @@ export const Portfolio = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {projects.length > 0 ? projects.map((project) => (
+                            {Array.isArray(projects) && projects.length > 0 ? projects.map((project) => (
                                 <Card
                                     key={project.id}
                                     className="group bg-gray-50/30 dark:bg-white/5 rounded-3xl border-gray-200 dark:border-white/5 hover:border-sky-400/30 transition-all duration-500 overflow-hidden shadow-none hover:shadow-2xl hover:shadow-sky-400/5"
                                 >
                                     <div className="h-48 bg-gray-100 dark:bg-gray-900 relative overflow-hidden">
                                         {project.image_url ? (
-                                            <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
+                                            <img
+                                                src={project.image_url}
+                                                alt={project.title}
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700 cursor-zoom-in"
+                                                onClick={() => setSelectedProject(project)}
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <ImageIcon className="text-gray-300 dark:text-gray-700" size={40} />
                                             </div>
                                         )}
                                         <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                            {project.image_url && (
+                                                <Button
+                                                    size="icon"
+                                                    onClick={() => setSelectedProject(project)}
+                                                    className="w-10 h-10 bg-white/90 dark:bg-black/90 text-black dark:text-white rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 shadow-xl"
+                                                    title="Full View"
+                                                >
+                                                    <Maximize2 size={16} />
+                                                </Button>
+                                            )}
                                             {project.github_link && (
                                                 <Button size="icon" asChild className="w-10 h-10 bg-white/90 dark:bg-black/90 text-black dark:text-white rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 shadow-xl">
                                                     <a href={project.github_link} target="_blank" rel="noopener noreferrer"><Github size={16} /></a>
@@ -235,7 +251,7 @@ export const Portfolio = () => {
                         </div>
                     ) : (
                         <div className="space-y-12 ml-4">
-                            {experiences.length > 0 ? experiences.map((exp) => (
+                            {Array.isArray(experiences) && experiences.length > 0 ? experiences.map((exp) => (
                                 <div key={exp.id} className="group relative pl-12 border-l-2 border-gray-100 dark:border-white/5 py-2">
                                     <div className="absolute left-0 top-4 w-4 h-4 -translate-x-1/2 rounded-full bg-white dark:bg-black border-2 border-gray-200 dark:border-white/10 group-hover:border-sky-400 group-hover:scale-125 transition-all duration-300" />
 
@@ -285,6 +301,52 @@ export const Portfolio = () => {
                 </footer>
 
             </div>
+
+            {/* FULL VIEW IMAGE OVERLAY */}
+            <AnimatePresence>
+                {selectedProject && selectedProject.image_url && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex flex-col items-center justify-start bg-black/95 backdrop-blur-sm p-4 md:p-10 cursor-zoom-out overflow-y-auto"
+                        onClick={() => setSelectedProject(null)}
+                    >
+                        <motion.button
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl transition-all z-[110]"
+                            onClick={() => setSelectedProject(null)}
+                        >
+                            <X size={24} />
+                        </motion.button>
+
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                            className="relative max-w-7xl w-full flex-shrink-0 flex flex-col items-center justify-center gap-6 my-auto"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={selectedProject.image_url}
+                                alt={selectedProject.title}
+                                className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+                            />
+
+                            <div className="max-w-3xl text-center space-y-2 p-4">
+                                <h3 className="text-xl md:text-3xl font-black text-white uppercase tracking-tight">
+                                    {selectedProject.title}
+                                </h3>
+                                <p className="text-sm md:text-base text-gray-400 font-medium max-w-2xl mx-auto leading-relaxed">
+                                    {selectedProject.description}
+                                </p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
