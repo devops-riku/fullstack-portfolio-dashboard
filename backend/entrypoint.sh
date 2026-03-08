@@ -4,25 +4,23 @@ set -e
 echo "===== API Container Startup ====="
 
 # ---------------------------------------------------
-# 1. Ensure root .env exists
-# ---------------------------------------------------
-if [ ! -f /project_root/.env ]; then
-    echo "Creating /project_root/.env from .env.example..."
-    cp /project_root/.env.example /project_root/.env
-fi
-
-# ---------------------------------------------------
-# 2. Sync .env into backend folder
+# 1. Sync .env into backend folder
 # ---------------------------------------------------
 if [ -f /project_root/.env ]; then
-    echo "Syncing .env to backend folder..."
+    echo "Syncing .env from mounted /project_root to backend folder..."
     cp /project_root/.env /app/.env
+elif [ ! -f /app/.env ]; then
+    if [ -f /app/.env.example ]; then
+        echo "Creating /app/.env from .env.example fallback..."
+        cp /app/.env.example /app/.env
+    else
+        echo "WARNING: No .env found. Relying strictly on Docker environment variables."
+    fi
+fi
 
-    echo "Env sync complete. Preview:"
-    grep -v "PASSWORD\|KEY" /app/.env | head -n 5
-else
-    echo "ERROR: /project_root/.env not found!"
-    exit 1
+if [ -f /app/.env ]; then
+    echo "Env check complete. Preview:"
+    grep -v "PASSWORD\|KEY" /app/.env | head -n 5 || true
 fi
 
 # ---------------------------------------------------
