@@ -33,8 +33,8 @@ services:
         condition: service_healthy
     command: sh /app/entrypoint.sh sh -c "alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
-      - default
-      - traefik_network
+      - traefik-proxy
+      - portfolio-internal
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/api\")"
@@ -58,8 +58,7 @@ services:
     depends_on:
       - backend
     networks:
-      - default
-      - traefik_network
+      - traefik-proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/\")"
@@ -69,9 +68,15 @@ services:
       - "traefik.http.services.frontend.loadbalancer.server.port=5173"
 
 volumes:
-  postgres_data:
+  portfolio_postgres_data:
 
 
 networks:
-  traefik_network:
+  # Shared Traefik network (from App 1)
+  traefik-proxy:
     external: true
+    name: asseqr-system_app-network
+
+  # Local network for this app
+  portfolio-internal:
+    driver: bridge
