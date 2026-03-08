@@ -25,7 +25,7 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=asseqr-main-app-network"
+      - "traefik.docker.network=asseqr-system_app-network"
 
       - "traefik.http.routers.portfolio-api.rule=Host(`eric.linkerx.dev`) && PathPrefix(`/api`)"
       - "traefik.http.routers.portfolio-api.entrypoints=websecure"
@@ -51,7 +51,7 @@ services:
 
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=asseqr-main-app-network"
+      - "traefik.docker.network=asseqr-system_app-network"
 
       - "traefik.http.routers.portfolio-frontend.rule=Host(`eric.linkerx.dev`)"
       - "traefik.http.routers.portfolio-frontend.entrypoints=websecure"
@@ -89,7 +89,7 @@ networks:
   # Shared Traefik network (from App 1)
   traefik-proxy:
     external: true
-    name: asseqr-main-app-network
+    name: asseqr-system_app-network
 
   # Private network for API + DB
   portfolio-internal:
