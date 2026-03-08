@@ -48,7 +48,7 @@ services:
     depends_on:
       - api
     networks:
-      - traefik-proxy
+      - traefik-proxy      
 
     labels:
       - "traefik.enable=true"
@@ -89,11 +89,11 @@ services:
 # Networks
 # =========================
 networks:
-
-  # Shared Traefik network
+  # Shared Traefik network (from App 1)
   traefik-proxy:
     external: true
-    name: asseqr-main_app-network
+    name: asseqr-system_app-network
+    
 
   # Private network for API + DB
   portfolio-internal:
