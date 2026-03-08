@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://rikudev:riku_secure_password@db:5432/portfolio_db
+      DATABASE_URL: postgresql+asyncpg://postgres:riku@db:5432/portfolio_db
     depends_on:
       db:
         condition: service_healthy
