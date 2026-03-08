@@ -85,7 +85,18 @@ export const Navbar = () => {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-2"
         >
-          <Link to="/" className="group flex items-center gap-2">
+          <Link
+            to="/"
+            className="group flex items-center gap-2"
+            onClick={(e) => {
+              if (isPortfolioPage) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                window.scrollTo({ top: 0 });
+              }
+            }}
+          >
             <span className="text-xl font-black tracking-tighter text-black dark:text-white uppercase transition-colors">
               Riku<span className="text-sky-400">.</span>Dev
             </span>
