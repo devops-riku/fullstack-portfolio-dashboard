@@ -182,3 +182,9 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 .gstack/
+
+# --- Frontend overrides ---
+# The Python "lib/" rule (Distribution / packaging section above) is a bare
+# directory match, so it accidentally ignores frontend/src/lib — which holds
+# real source (the cn() util). Re-include it.
+!frontend/src/lib/
