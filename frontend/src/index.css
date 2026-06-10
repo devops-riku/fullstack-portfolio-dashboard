@@ -4,9 +4,16 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+  DARK-FIRST: dark is the default experience (the app boots with the `.dark`
+  class on <html> — see index.html / Navbar). `:root` holds the light palette
+  so the existing hardcoded light colors + `dark:` variants keep working.
+*/
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
+  --surface: 210 40% 99%;
+  --surface-elevated: 0 0% 100%;
   --card: 0 0% 100%;
   --card-foreground: 222.2 84% 4.9%;
   --popover: 0 0% 100%;
@@ -17,36 +24,43 @@
   --secondary-foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
+  --accent: 199 89% 48%;
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem;
+  --ring: 199 89% 48%;
+  --radius: 0.75rem;
+
+  --glow: 199 90% 60%;
+  --font-mono: ui-monospace, "JetBrains Mono", "SF Mono", "Menlo", monospace;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  /* Layered near-black surfaces — not pure #000, so cards read as layers */
+  --background: 222 14% 5%;        /* ~#0a0b0d page base */
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --surface: 222 13% 7%;           /* ~#101114 base card */
+  --surface-elevated: 220 13% 10%; /* ~#15171c raised card */
+  --card: 222 13% 7%;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: 222 14% 6%;
   --popover-foreground: 210 40% 98%;
   --primary: 210 40% 98%;
   --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
+  --secondary: 217 19% 14%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --muted: 217 19% 14%;
+  --muted-foreground: 217 12% 60%;
+  --accent: 199 89% 56%;           /* sky-400-ish accent */
+  --accent-foreground: 222 47% 8%;
+  --destructive: 0 72% 51%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 212.7 26.8% 83.9%;
+  --border: 215 17% 16%;
+  --input: 215 17% 16%;
+  --ring: 199 89% 56%;
+  --glow: 199 90% 60%;
 }
 
 @theme {
@@ -55,6 +69,9 @@
   --color-ring: hsl(var(--ring));
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
+
+  --color-surface: hsl(var(--surface));
+  --color-surface-elevated: hsl(var(--surface-elevated));
 
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
@@ -77,12 +94,18 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  --color-glow: hsl(var(--glow));
+
+  --font-mono: var(--font-mono);
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+  --animate-aurora: aurora 14s ease-in-out infinite;
 
   @keyframes accordion-down {
     from {
@@ -103,6 +126,28 @@
       height: 0;
     }
   }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 hsl(var(--glow) / 0.5);
+    }
+    50% {
+      opacity: 0.85;
+      box-shadow: 0 0 0 6px hsl(var(--glow) / 0);
+    }
+  }
+
+  @keyframes aurora {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 0.55;
+    }
+    50% {
+      transform: translate3d(4%, -6%, 0) scale(1.15);
+      opacity: 0.8;
+    }
+  }
 }
 
 @layer base {
@@ -116,13 +161,59 @@
   }
 }
 
+@layer utilities {
+  /* Reusable glass surface: blur + hairline border + faint inner highlight */
+  .glass {
+    background: hsl(var(--surface) / 0.7);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.7);
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.04);
+  }
+
+  .glass-strong {
+    background: hsl(var(--surface-elevated) / 0.85);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid hsl(var(--border) / 0.8);
+    box-shadow: inset 0 1px 0 0 hsl(0 0% 100% / 0.05);
+  }
+
+  /* Soft cyan->sky accent glow for hover/focus emphasis */
+  .glow-accent {
+    box-shadow: 0 0 0 1px hsl(var(--accent) / 0.25),
+      0 8px 30px -8px hsl(var(--glow) / 0.35);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Respect reduced motion globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Custom Sonner Monochrome Styling (Black & Blue) */
 [data-sonner-toast] {
-  background: #000 !important;
+  background: hsl(var(--surface-elevated)) !important;
   color: #fff !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   font-family: inherit !important;
   border-radius: 1rem !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 [data-sonner-toast][data-type='success'] {

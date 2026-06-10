@@ -7,10 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Riku.Dev Portfolio</title>
   <script>
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark')
-    } else {
+    // Dark-first: default to dark unless the user explicitly chose light.
+    if (localStorage.theme === 'light') {
       document.documentElement.classList.remove('dark')
+    } else {
+      document.documentElement.classList.add('dark')
     }
   </script>
 </head>
