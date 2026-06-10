@@ -36,6 +36,9 @@ export const ExperienceList = () => {
 
     useEffect(() => {
         fetchExperiences();
+        const onRefresh = () => fetchExperiences();
+        window.addEventListener('cms:refresh', onRefresh);
+        return () => window.removeEventListener('cms:refresh', onRefresh);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {

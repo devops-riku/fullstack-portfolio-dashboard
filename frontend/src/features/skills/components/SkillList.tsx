@@ -40,6 +40,9 @@ export const SkillList = () => {
 
     useEffect(() => {
         fetchSkills();
+        const onRefresh = () => fetchSkills();
+        window.addEventListener('cms:refresh', onRefresh);
+        return () => window.removeEventListener('cms:refresh', onRefresh);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {

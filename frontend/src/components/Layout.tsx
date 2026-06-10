@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Navbar } from './Navbar';
 import { Toaster } from 'sonner';
+import { CommandLauncher } from '../features/terminal/CommandLauncher';
 
 export const Layout = () => {
   // Follow the app's active theme (Navbar toggles the `dark` class on <html>).
@@ -30,6 +31,7 @@ export const Layout = () => {
       <main className="relative z-10 flex-grow container mx-auto px-4 md:px-0 pt-24">
         <Outlet />
       </main>
+      <CommandLauncher />
     </div>
   );
 };

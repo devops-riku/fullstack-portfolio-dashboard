@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import { CommandTerminal } from '../../terminal/CommandTerminal';
 
 export const ProjectList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -43,6 +44,9 @@ export const ProjectList = () => {
 
   useEffect(() => {
     fetchProjects();
+    const onRefresh = () => fetchProjects();
+    window.addEventListener('cms:refresh', onRefresh);
+    return () => window.removeEventListener('cms:refresh', onRefresh);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,6 +108,20 @@ export const ProjectList = () => {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-24 py-24">
+
+      {/* 💻 TERMINAL CMS CONSOLE */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-3 px-1">
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-sky-400">00 — console</span>
+          <span className="h-px flex-1 bg-gradient-to-r from-sky-400/30 to-transparent" />
+        </div>
+        <h2 className="text-2xl font-black tracking-tight uppercase">Command Center</h2>
+        <p className="text-sm text-gray-400 font-medium -mt-2">
+          Manage everything by command. Type <span className="font-mono text-sky-400">/help</span> to start,
+          or press <span className="font-mono text-sky-400">⌘K</span> anywhere.
+        </p>
+        <CommandTerminal onMutate={fetchProjects} />
+      </section>
 
       {/* 👤 PROFILE SETTINGS */}
       <ProfileEditor />
