@@ -57,7 +57,7 @@ export const ProjectList = () => {
       resetForm();
       fetchProjects();
       toast.success(editingId ? 'Project updated' : 'Project published');
-    } catch (error) {
+    } catch {
       toast.error('Failed to save project');
     } finally {
       setIsSubmitting(false);
@@ -83,7 +83,7 @@ export const ProjectList = () => {
         await deleteProject(id);
         setProjects(projects.filter(p => p.id !== id));
         toast.success('Project deleted');
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete project');
       }
     }
@@ -110,13 +110,14 @@ export const ProjectList = () => {
 
       {/* 🚀 PROJECTS - COMPACT LIST */}
       <section className="space-y-8">
-        <Card className="border-none shadow-sm bg-white dark:bg-black p-2">
+        <Card className="glass border-none shadow-sm bg-white dark:bg-surface-elevated rounded-2xl p-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-900/20">
+              <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-400/10 ring-1 ring-sky-400/20">
                 <LayoutTemplate className="text-sky-400" size={24} />
               </div>
               <div>
+                <span className="block font-mono text-[10px] tracking-[0.25em] text-sky-400/80 uppercase mb-1">02 — Work</span>
                 <CardTitle className="text-xl font-black tracking-tight uppercase">Projects</CardTitle>
                 <CardDescription className="text-sm text-gray-400 font-medium tracking-tight">Manage your work portfolio</CardDescription>
               </div>
@@ -125,7 +126,7 @@ export const ProjectList = () => {
               variant="secondary"
               size="icon"
               onClick={() => showForm ? resetForm() : setShowForm(true)}
-              className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/20 h-10 w-10 transition-all active:scale-95"
+              className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/30 hover:shadow-sky-400/40 h-10 w-10 transition-all active:scale-95 hover:-translate-y-0.5"
             >
               {showForm ? <X size={20} /> : <Plus size={20} />}
             </Button>
@@ -140,7 +141,7 @@ export const ProjectList = () => {
               exit={{ opacity: 0, height: 0, marginTop: 0 }}
               className="overflow-hidden"
             >
-              <Card className="border-none shadow-sm bg-gray-50/50 dark:bg-black/50 overflow-hidden">
+              <Card className="glass border-none shadow-sm bg-gray-50/50 dark:bg-surface rounded-2xl overflow-hidden">
                 <CardContent className="p-6">
                   <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div className="space-y-2">
@@ -149,7 +150,7 @@ export const ProjectList = () => {
                         required
                         value={formProject.title}
                         onChange={e => setFormProject({ ...formProject, title: e.target.value })}
-                        className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                        className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                         placeholder="Project Title"
                       />
                     </div>
@@ -160,7 +161,7 @@ export const ProjectList = () => {
                         <Input
                           value={formProject.image_url}
                           onChange={e => setFormProject({ ...formProject, image_url: e.target.value })}
-                          className="bg-white dark:bg-black border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                          className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                           placeholder="https://..."
                         />
                       </div>
@@ -171,7 +172,7 @@ export const ProjectList = () => {
                         required
                         value={formProject.description}
                         onChange={e => setFormProject({ ...formProject, description: e.target.value })}
-                        className="bg-white dark:bg-black border-gray-100 dark:border-white/10 min-h-[100px] text-sm focus-visible:ring-sky-400 resize-none"
+                        className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 min-h-[100px] text-sm focus-visible:ring-sky-400 resize-none transition-shadow"
                         placeholder="Brief description..."
                       />
                     </div>
@@ -182,7 +183,7 @@ export const ProjectList = () => {
                         <Input
                           value={formProject.github_link}
                           onChange={e => setFormProject({ ...formProject, github_link: e.target.value })}
-                          className="bg-white dark:bg-black border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                          className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                           placeholder="https://github.com/..."
                         />
                       </div>
@@ -190,7 +191,7 @@ export const ProjectList = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="md:col-span-2 h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white mt-4"
+                      className="md:col-span-2 h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white mt-4 transition-all active:scale-[0.99] hover:shadow-lg hover:shadow-sky-400/20"
                     >
                       {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : (editingId ? <Save size={16} /> : <Plus size={16} />)}
                       {editingId ? 'Update Project' : 'Publish Project'}
@@ -206,10 +207,10 @@ export const ProjectList = () => {
           {loading ? (
             <div className="flex justify-center py-10"><Loader2 className="animate-spin text-sky-400" size={32} /></div>
           ) : projects.length > 0 ? projects.map(project => (
-            <Card key={project.id} className="group border-none shadow-sm bg-white dark:bg-black hover:bg-gray-50/50 dark:hover:bg-white/5 transition-all overflow-hidden">
+            <Card key={project.id} className="group border border-transparent dark:border-white/5 shadow-sm bg-white dark:bg-surface hover:bg-gray-50/50 dark:hover:bg-surface-elevated hover:border-sky-400/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden rounded-2xl">
               <CardContent className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-white/5 overflow-hidden flex items-center justify-center shrink-0 shadow-inner">
+                  <div className="w-14 h-14 rounded-xl bg-gray-50 dark:bg-surface-elevated border border-gray-100 dark:border-white/5 overflow-hidden flex items-center justify-center shrink-0 shadow-inner">
                     {project.image_url ? (
                       <img src={project.image_url} className="w-full h-full object-cover transition-all duration-500 scale-110 group-hover:scale-100" />
                     ) : (
@@ -240,9 +241,9 @@ export const ProjectList = () => {
               </CardContent>
             </Card>
           )) : (
-            <Card className="border-dashed bg-transparent border-gray-100 dark:border-white/10">
+            <Card className="border-dashed bg-transparent border-gray-200 dark:border-white/10 rounded-2xl">
               <CardContent className="py-20 text-center">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Zero projects found</p>
+                <p className="font-mono text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Zero projects found</p>
               </CardContent>
             </Card>
           )}

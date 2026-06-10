@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { User, Save, Loader2, Link as LinkIcon, Github, Linkedin, BadgeHelp, LayoutTemplate, Sparkles } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ export const ProfileEditor = () => {
                 setProfile({ ...profile, bio });
                 toast.success('Bio improved by AI! ✨');
             }
-        } catch (err) {
+        } catch {
             toast.error('AI is currently unavailable');
         } finally {
             setGenerating(false);
@@ -56,7 +56,7 @@ export const ProfileEditor = () => {
         try {
             await updateProfile(profile);
             toast.success('Profile identity synced!');
-        } catch (err) {
+        } catch {
             toast.error('Failed to sync profile');
         } finally {
             setSaving(false);
@@ -67,12 +67,13 @@ export const ProfileEditor = () => {
 
     return (
         <section className="space-y-6">
-            <Card className="border-none shadow-sm bg-white dark:bg-black p-2">
+            <Card className="glass border-none shadow-sm bg-white dark:bg-surface-elevated rounded-2xl p-2">
                 <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-                    <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-900/20">
+                    <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-400/10 ring-1 ring-sky-400/20">
                         <User className="text-sky-400" size={24} />
                     </div>
                     <div>
+                        <span className="block font-mono text-[10px] tracking-[0.25em] text-sky-400/80 uppercase mb-1">01 — Identity</span>
                         <CardTitle className="text-xl font-black tracking-tight uppercase">Public Profile</CardTitle>
                         <CardDescription className="text-sm text-gray-400 font-medium tracking-tight">Global portfolio settings and identity</CardDescription>
                     </div>
@@ -80,7 +81,7 @@ export const ProfileEditor = () => {
             </Card>
 
             <form onSubmit={handleSubmit}>
-                <Card className="border-none shadow-sm bg-white dark:bg-black p-4">
+                <Card className="glass border-none shadow-sm bg-white dark:bg-surface rounded-2xl p-4">
                     <CardContent className="space-y-8 pt-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                             {/* Identity */}
@@ -94,7 +95,7 @@ export const ProfileEditor = () => {
                                 <Input
                                     value={profile?.full_name}
                                     onChange={(e) => setProfile({ ...profile!, full_name: e.target.value })}
-                                    className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                    className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
                                     placeholder="Your Name"
                                 />
                             </div>
@@ -103,7 +104,7 @@ export const ProfileEditor = () => {
                                 <Input
                                     value={profile?.email}
                                     onChange={(e) => setProfile({ ...profile!, email: e.target.value })}
-                                    className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                    className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
                                     placeholder="hello@example.com"
                                 />
                             </div>
@@ -119,7 +120,7 @@ export const ProfileEditor = () => {
                                 <Input
                                     value={profile?.title}
                                     onChange={(e) => setProfile({ ...profile!, title: e.target.value })}
-                                    className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-12 text-sm font-black focus-visible:ring-sky-400"
+                                    className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-black focus-visible:ring-sky-400"
                                     placeholder="e.g. Design. Code. Scale."
                                 />
                             </div>
@@ -141,7 +142,7 @@ export const ProfileEditor = () => {
                                 <Textarea
                                     value={profile?.bio}
                                     onChange={(e) => setProfile({ ...profile!, bio: e.target.value })}
-                                    className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 min-h-[120px] text-sm focus-visible:ring-sky-400 resize-none"
+                                    className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 min-h-[120px] text-sm focus-visible:ring-sky-400 resize-none"
                                     placeholder="Tell your story..."
                                 />
                             </div>
@@ -150,7 +151,7 @@ export const ProfileEditor = () => {
                                 <Input
                                     value={profile?.avatar_url}
                                     onChange={(e) => setProfile({ ...profile!, avatar_url: e.target.value })}
-                                    className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                    className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
                                     placeholder="https://..."
                                 />
                             </div>
@@ -168,7 +169,7 @@ export const ProfileEditor = () => {
                                     <Input
                                         value={profile?.github_url}
                                         onChange={(e) => setProfile({ ...profile!, github_url: e.target.value })}
-                                        className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                        className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
                                         placeholder="#"
                                     />
                                 </div>
@@ -180,7 +181,7 @@ export const ProfileEditor = () => {
                                     <Input
                                         value={profile?.linkedin_url}
                                         onChange={(e) => setProfile({ ...profile!, linkedin_url: e.target.value })}
-                                        className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                        className="bg-gray-50/50 dark:bg-surface-elevated border-gray-100 dark:border-white/10 pl-11 h-12 text-sm font-bold focus-visible:ring-sky-400"
                                         placeholder="#"
                                     />
                                 </div>
@@ -191,7 +192,7 @@ export const ProfileEditor = () => {
                             <Button
                                 type="submit"
                                 disabled={saving}
-                                className="w-full h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl transition-all hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white flex items-center justify-center gap-2"
+                                className="w-full h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl transition-all hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white flex items-center justify-center gap-2 active:scale-[0.99] hover:shadow-lg hover:shadow-sky-400/20"
                             >
                                 {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                 Sync Profile to Cloud

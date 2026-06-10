@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Lock, Mail } from 'lucide-react';
+import { Loader2, Lock, Mail, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const Login = () => {
@@ -25,7 +25,7 @@ export const Login = () => {
       const { access_token } = await login(params);
       localStorage.setItem('token', access_token);
       navigate('/dashboard');
-    } catch (error) {
+    } catch {
       toast.error('Login failed');
     } finally {
       setLoading(false);
@@ -33,31 +33,44 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-gray-50 dark:bg-black p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl bg-white dark:bg-black overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600"></div>
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-gray-50 dark:bg-black p-4">
+      {/* Layered aurora glow — dark mode only, keeps light mode clean */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden dark:block"
+      >
+        <div className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/20 blur-3xl animate-aurora" />
+        <div className="absolute left-1/2 top-1/3 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/10 blur-3xl animate-aurora" />
+      </div>
+
+      <Card className="relative z-10 w-full max-w-md overflow-hidden border-none shadow-2xl glass-strong">
+        {/* Refined top accent bar */}
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-sky-400 to-transparent opacity-90"></div>
 
         <CardHeader className="space-y-4 pt-10 pb-6 text-center">
-          <div className="mx-auto w-12 h-12 bg-sky-50 dark:bg-sky-900/20 rounded-2xl flex items-center justify-center text-sky-400">
-            <Lock size={24} />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-500 dark:bg-sky-400/10 dark:text-sky-400 animate-pulse-glow">
+            <ShieldCheck size={24} />
           </div>
-          <div>
+          <div className="space-y-2">
             <CardTitle className="text-2xl font-black uppercase tracking-tight">Admin Portal</CardTitle>
-            <CardDescription className="text-sm font-medium text-gray-400">Enter credentials to manage your portfolio</CardDescription>
+            <CardDescription className="text-sm font-medium text-muted-foreground">Enter credentials to manage your portfolio</CardDescription>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/70">
+              <span className="text-sky-500 dark:text-sky-400">●</span> Secure Session
+            </p>
           </div>
         </CardHeader>
 
         <CardContent className="px-8 pb-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Email / Username</Label>
+              <Label className="ml-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Email / Username</Label>
               <div className="relative group">
-                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
+                <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-sky-400" />
                 <Input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-14 pl-12 text-sm font-bold focus-visible:ring-sky-400"
+                  className="h-14 border-gray-100 bg-gray-50/50 pl-12 text-sm font-bold transition-shadow focus-visible:ring-sky-400 dark:border-white/10 dark:bg-black/40"
                   placeholder="your@email.com"
                   required
                 />
@@ -66,15 +79,15 @@ export const Login = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Password</Label>
+                <Label className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Password</Label>
               </div>
               <div className="relative group">
-                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
+                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-sky-400" />
                 <Input
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="bg-gray-50/50 dark:bg-black/50 border-gray-100 dark:border-white/10 h-14 pl-12 text-sm font-bold focus-visible:ring-sky-400"
+                  className="h-14 border-gray-100 bg-gray-50/50 pl-12 text-sm font-bold transition-shadow focus-visible:ring-sky-400 dark:border-white/10 dark:bg-black/40"
                   placeholder="••••••••"
                   required
                 />
@@ -84,10 +97,14 @@ export const Login = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl shadow-xl shadow-black/5 hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all transform active:scale-[0.98]"
+              className="h-14 w-full rounded-xl bg-black text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-black/5 transition-all hover:bg-sky-500 hover:shadow-sky-500/20 active:scale-[0.98] dark:bg-white dark:text-black dark:hover:bg-sky-400 dark:hover:text-white"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : "Unlock Dashboard"}
             </Button>
+
+            <p className="pt-1 text-center font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground/50">
+              Encrypted · Admin Access Only
+            </p>
           </form>
         </CardContent>
       </Card>

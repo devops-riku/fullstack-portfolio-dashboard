@@ -1,6 +1,6 @@
 import { Terminal, Github, Linkedin, Mail, User, Loader2, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { getProjects, type Project } from '../../projects/api';
 import { getExperiences, type Experience } from '../../experience/api';
 import { getSkills, type Skill } from '../../skills/api';
@@ -10,6 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
+// Small muted mono index label for section headers.
+const SectionLabel = ({ index, children }: { index: string; children: ReactNode }) => (
+    <span className="font-mono text-gray-300 dark:text-gray-600">
+        {index} <span className="text-gray-400 dark:text-gray-500">/</span> <span className="text-gray-400 dark:text-gray-400">{children}</span>
+    </span>
+);
 
 export const Portfolio = () => {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -34,15 +40,18 @@ export const Portfolio = () => {
         fetchAll();
     }, []);
 
+    // Unified smooth easing preset reused across all reveals.
+    const ease = [0.22, 1, 0.36, 1] as const;
+
     const fadeIn = {
         initial: { opacity: 0, y: 15 },
         whileInView: { opacity: 1, y: 0 },
         viewport: { once: true },
-        transition: { duration: 0.5 }
+        transition: { duration: 0.6, ease }
     };
 
     return (
-        <div className="bg-white dark:bg-black min-h-screen text-black dark:text-white font-sans selection:bg-sky-100 dark:selection:bg-sky-900/30">
+        <div className="bg-white dark:bg-surface min-h-screen text-black dark:text-white font-sans selection:bg-sky-100 dark:selection:bg-sky-900/30">
 
             <div className="max-w-4xl mx-auto px-6 pb-12 pt-0 space-y-24">
 
@@ -54,12 +63,18 @@ export const Portfolio = () => {
                     className="flex flex-col md:flex-row items-center gap-12 pt-0"
                 >
                     <div className="flex-1 space-y-6 text-center md:text-left order-2 md:order-1">
-                        <div className="space-y-2">
-                            <Badge variant="outline" className="border-sky-400/30 text-sky-400 bg-sky-400/5 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em]">
-                                Available for Projects
-                            </Badge>
-                            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-[0.9] pt-2">
-                                {profile?.title || 'Design. Code. Scale.'}
+                        <div className="space-y-3">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-400/5 dark:bg-sky-400/10 px-3 py-1.5 backdrop-blur-sm">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 animate-ping" />
+                                    <span className="relative inline-flex h-2 w-2 rounded-full bg-sky-400" />
+                                </span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-sky-500 dark:text-sky-400">
+                                    Available for Projects
+                                </span>
+                            </div>
+                            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.92] pt-1">
+                                {profile?.title || 'Design. Code. Secure.'}
                             </h1>
                         </div>
 
@@ -93,13 +108,18 @@ export const Portfolio = () => {
                     </div>
 
                     <div className="w-48 h-48 md:w-56 md:h-56 relative group shrink-0 order-1 md:order-2">
+                        {/* Aurora / grid glow behind the avatar */}
+                        <div className="absolute -inset-8 -z-0 pointer-events-none" aria-hidden="true">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-sky-400/30 via-sky-400/10 to-transparent blur-3xl animate-aurora" />
+                            <div className="absolute inset-6 rounded-full bg-[radial-gradient(circle_at_30%_30%,theme(colors.sky.400/0.25),transparent_60%)] blur-2xl animate-aurora [animation-delay:-7s]" />
+                        </div>
                         <div className="absolute inset-0 bg-sky-400/20 rounded-[2.5rem] blur-2xl group-hover:bg-sky-400/30 transition-all duration-500"></div>
                         <motion.div
                             whileHover={{ rotate: 5, scale: 1.05 }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            className="absolute inset-0 bg-white dark:bg-black rounded-[2.5rem] overflow-hidden border-2 border-gray-100 dark:border-white/10 flex items-center justify-center shadow-2xl z-10 p-1"
+                            className="absolute inset-0 glass-strong dark:bg-surface-elevated rounded-[2.5rem] overflow-hidden border-2 border-gray-100 dark:border-white/10 flex items-center justify-center shadow-2xl z-10 p-1"
                         >
-                            <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+                            <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-gray-50 dark:bg-surface flex items-center justify-center">
                                 {profile?.avatar_url ? (
                                     <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
@@ -112,7 +132,9 @@ export const Portfolio = () => {
 
                 {/* TECH STACK - DYNAMIC CATEGORIES */}
                 <motion.section id="stack" {...fadeIn} className="scroll-mt-32 space-y-8">
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 px-1">Tech Stack</h2>
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 px-1">
+                        <SectionLabel index="01">Tech Stack</SectionLabel>
+                    </h2>
 
                     <div className="space-y-10">
                         {Array.from(new Set(skills.map(s => s.category || 'other'))).map(catId => {
@@ -143,9 +165,9 @@ export const Portfolio = () => {
                                             >
                                                 <Badge
                                                     variant="secondary"
-                                                    className="px-4 py-2.5 rounded-xl font-bold text-[11px] border border-gray-100 dark:border-white/5 transition-all text-gray-600 dark:text-gray-400 bg-gray-50/50 dark:bg-white/5 hover:border-sky-400/30 hover:text-sky-400 cursor-default flex items-center gap-2.5"
+                                                    className="px-4 py-2.5 rounded-xl font-bold text-[11px] border border-gray-100 dark:border-white/5 dark:bg-surface-elevated bg-gray-50/50 text-gray-600 dark:text-gray-400 cursor-default flex items-center gap-2.5 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-sky-400/40 hover:text-sky-500 dark:hover:text-sky-400 hover:ring-1 hover:ring-sky-400/30 hover:shadow-lg hover:shadow-sky-400/10"
                                                 >
-                                                    <Icon icon={skill.icon_name || 'ph:code-bold'} className="text-sm" />
+                                                    <Icon icon={skill.icon_name || 'ph:code-bold'} className="text-sm transition-all duration-300 group-hover:scale-110 group-hover:text-sky-400 group-hover:drop-shadow-[0_0_6px_theme(colors.sky.400/0.6)]" />
                                                     {skill.name}
                                                 </Badge>
                                             </div>
@@ -163,7 +185,9 @@ export const Portfolio = () => {
 
                 {/* PROJECTS - MINIMAL GRID */}
                 <motion.section id="projects" {...fadeIn} className="scroll-mt-32">
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 px-1">Projects</h2>
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 px-1">
+                        <SectionLabel index="02">Projects</SectionLabel>
+                    </h2>
 
                     {loading ? (
                         <div className="flex justify-center py-20">
@@ -171,17 +195,24 @@ export const Portfolio = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {projects.length > 0 ? projects.map((project) => (
-                                <Card
+                            {projects.length > 0 ? projects.map((project, index) => (
+                                <motion.div
                                     key={project.id}
-                                    className="group bg-gray-50/30 dark:bg-white/5 rounded-3xl border-gray-200 dark:border-white/5 hover:border-sky-400/30 transition-all duration-500 overflow-hidden shadow-none hover:shadow-2xl hover:shadow-sky-400/5"
+                                    initial={{ opacity: 0, y: 24 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-60px" }}
+                                    transition={{ duration: 0.6, ease, delay: index * 0.08 }}
                                 >
-                                    <div className="h-48 bg-gray-100 dark:bg-gray-900 relative overflow-hidden">
+                                <Card
+                                    className="group h-full bg-gray-50/30 dark:bg-surface-elevated rounded-3xl border-gray-200 dark:border-white/5 transition-all duration-500 ease-out overflow-hidden shadow-none hover:-translate-y-1.5 hover:border-sky-400/40 hover:shadow-2xl hover:shadow-sky-400/10"
+                                >
+                                    <div className="h-48 bg-gray-100 dark:bg-surface relative overflow-hidden">
                                         {project.image_url ? (
                                             <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <ImageIcon className="text-gray-300 dark:text-gray-700" size={40} />
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 via-gray-50 to-sky-100/40 dark:from-surface-elevated dark:via-surface dark:to-sky-950/30 relative">
+                                                <div className="absolute inset-0 opacity-[0.07] dark:opacity-[0.12] bg-[linear-gradient(theme(colors.sky.500)_1px,transparent_1px),linear-gradient(90deg,theme(colors.sky.500)_1px,transparent_1px)] bg-[size:22px_22px]" />
+                                                <ImageIcon className="relative text-gray-300 dark:text-gray-700 transition-transform duration-500 group-hover:scale-110 group-hover:text-sky-400/60" size={40} />
                                             </div>
                                         )}
                                         <div className="absolute top-4 right-4 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
@@ -216,6 +247,7 @@ export const Portfolio = () => {
                                         </div>
                                     </CardContent>
                                 </Card>
+                                </motion.div>
                             )) : (
                                 <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 dark:border-white/5 rounded-[2.5rem]">
                                     <p className="text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Workshop is currently empty</p>
@@ -227,7 +259,9 @@ export const Portfolio = () => {
 
                 {/* EXPERIENCE - MINIMAL TIMELINE */}
                 <motion.section id="experience" {...fadeIn} className="scroll-mt-32">
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 px-1">Professional Path</h2>
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10 px-1">
+                        <SectionLabel index="03">Professional Path</SectionLabel>
+                    </h2>
 
                     {loading ? (
                         <div className="flex justify-center py-20">
@@ -236,8 +270,10 @@ export const Portfolio = () => {
                     ) : (
                         <div className="space-y-12 ml-4">
                             {experiences.length > 0 ? experiences.map((exp) => (
-                                <div key={exp.id} className="group relative pl-12 border-l-2 border-gray-100 dark:border-white/5 py-2">
-                                    <div className="absolute left-0 top-4 w-4 h-4 -translate-x-1/2 rounded-full bg-white dark:bg-black border-2 border-gray-200 dark:border-white/10 group-hover:border-sky-400 group-hover:scale-125 transition-all duration-300" />
+                                <div key={exp.id} className="group relative pl-12 py-2">
+                                    {/* Gradient-fading connecting line */}
+                                    <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-200 to-transparent dark:via-white/10 group-hover:via-sky-400/40 transition-colors duration-500" aria-hidden="true" />
+                                    <div className="absolute left-0 top-4 w-4 h-4 -translate-x-1/2 rounded-full bg-white dark:bg-surface-elevated border-2 border-gray-200 dark:border-white/10 group-hover:border-sky-400 group-hover:scale-125 group-hover:animate-pulse-glow group-hover:[--glow:199_89%_60%] transition-all duration-300" />
 
                                     <div className="space-y-2">
                                         <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-2">
@@ -267,6 +303,9 @@ export const Portfolio = () => {
                 {/* CONTACT - ULTRA MINIMAL */}
                 <motion.section id="contact" {...fadeIn} className="scroll-mt-32 py-24 text-center border-t border-gray-50 dark:border-white/5">
                     <div className="space-y-4 max-w-md mx-auto">
+                        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">
+                            <SectionLabel index="04">Contact</SectionLabel>
+                        </div>
                         <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-none">Let's build something.</h2>
                         <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium pb-4">
                             Inquiries, collaborations, or just a virtual coffee.

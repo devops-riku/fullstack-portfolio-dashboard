@@ -56,7 +56,7 @@ export const SkillList = () => {
             setShowForm(false);
             setEditingId(null);
             fetchSkills();
-        } catch (err) {
+        } catch {
             toast.error('Failed to save skill');
         } finally {
             setIsSubmitting(false);
@@ -78,7 +78,7 @@ export const SkillList = () => {
             try {
                 await deleteSkill(id);
                 fetchSkills();
-            } catch (err) {
+            } catch {
                 toast.error('Failed to delete skill');
             }
         }
@@ -98,13 +98,14 @@ export const SkillList = () => {
 
     return (
         <div className="space-y-6">
-            <Card className="border-none shadow-sm bg-white dark:bg-black p-2">
+            <Card className="glass border-none shadow-sm bg-white dark:bg-surface-elevated rounded-2xl p-2">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-900/20">
+                        <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-400/10 ring-1 ring-sky-400/20">
                             <Wrench className="text-sky-400" size={24} />
                         </div>
                         <div>
+                            <span className="block font-mono text-[10px] tracking-[0.25em] text-sky-400/80 uppercase mb-1">03 — Stack</span>
                             <CardTitle className="text-xl font-black tracking-tight uppercase">Tech Stack</CardTitle>
                             <CardDescription className="text-sm text-gray-400 font-medium tracking-tight">Tools and technologies you use</CardDescription>
                         </div>
@@ -113,7 +114,7 @@ export const SkillList = () => {
                         variant="secondary"
                         size="icon"
                         onClick={() => showForm ? resetForm() : setShowForm(true)}
-                        className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/20 h-10 w-10 transition-all active:scale-95"
+                        className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/30 hover:shadow-sky-400/40 h-10 w-10 transition-all active:scale-95 hover:-translate-y-0.5"
                     >
                         {showForm ? <X size={20} /> : <Plus size={20} />}
                     </Button>
@@ -128,7 +129,7 @@ export const SkillList = () => {
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
                         className="overflow-hidden"
                     >
-                        <Card className="border-none shadow-sm bg-gray-50/50 dark:bg-black/50 overflow-hidden">
+                        <Card className="glass border-none shadow-sm bg-gray-50/50 dark:bg-surface rounded-2xl overflow-hidden">
                             <CardContent className="p-6">
                                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                     <div className="space-y-2">
@@ -139,7 +140,7 @@ export const SkillList = () => {
                                                 required
                                                 value={formSkill.name}
                                                 onChange={(e) => setFormSkill({ ...formSkill, name: e.target.value })}
-                                                className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400"
+                                                className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                                                 placeholder="e.g. React"
                                             />
                                         </div>
@@ -149,7 +150,7 @@ export const SkillList = () => {
                                         <Button
                                             type="button"
                                             onClick={() => setIsPickerOpen(true)}
-                                            className="w-full h-12 bg-white dark:bg-black border border-gray-100 dark:border-white/10 hover:bg-sky-50 dark:hover:bg-sky-400/10 text-black dark:text-white font-bold group flex justify-between px-4 transition-all hover:scale-[1.01]"
+                                            className="w-full h-12 bg-white dark:bg-surface-elevated border border-gray-100 dark:border-white/10 hover:bg-sky-50 dark:hover:bg-sky-400/10 text-black dark:text-white font-bold group flex justify-between px-4 transition-all hover:scale-[1.01]"
                                         >
                                             <div className="flex items-center gap-3">
                                                 <div className="p-1.5 rounded-lg bg-gray-50 dark:bg-white/5 group-hover:bg-sky-100 dark:group-hover:bg-sky-400/20 transition-colors">
@@ -169,7 +170,7 @@ export const SkillList = () => {
                                             required
                                             value={formSkill.category}
                                             onChange={(e) => setFormSkill({ ...formSkill, category: e.target.value })}
-                                            className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400"
+                                            className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                                             placeholder="e.g. Frontend, Backend, UI/UX..."
                                         />
                                     </div>
@@ -185,7 +186,7 @@ export const SkillList = () => {
                                         </Button>
                                         <Button
                                             disabled={isSubmitting}
-                                            className="h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all shadow-xl shadow-sky-500/10"
+                                            className="h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all active:scale-[0.99] shadow-xl shadow-sky-500/10 hover:shadow-lg hover:shadow-sky-400/20"
                                         >
                                             {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : (editingId ? 'Update Tech' : 'Add to Stack')}
                                         </Button>
@@ -209,11 +210,11 @@ export const SkillList = () => {
                 ) : skills.map((skill) => {
                     const category = categories.find(c => c.id === skill.category.toLowerCase()) || { name: skill.category, color: 'text-sky-400 bg-sky-400/10' };
                     return (
-                        <Card key={skill.id} className="group border-none shadow-sm bg-white dark:bg-black hover:bg-gray-50/50 dark:hover:bg-white/5 transition-all overflow-hidden border border-gray-50 dark:border-white/5">
+                        <Card key={skill.id} className="group border border-transparent dark:border-white/5 shadow-sm bg-white dark:bg-surface hover:bg-gray-50/50 dark:hover:bg-surface-elevated hover:border-sky-400/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden rounded-2xl">
                             <CardContent className="p-5">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3 min-w-0">
-                                        <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-white/5 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110">
+                                        <div className="p-2.5 rounded-2xl bg-gray-50 dark:bg-surface-elevated border border-gray-100 dark:border-white/5 flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110">
                                             <Icon icon={skill.icon_name || 'logos:react'} className="text-2xl" />
                                         </div>
                                         <div className="min-w-0">
@@ -237,9 +238,9 @@ export const SkillList = () => {
                     );
                 })}
                 {!loading && skills.length === 0 && (
-                    <Card className="col-span-full border-dashed bg-transparent border-gray-100 dark:border-white/10">
+                    <Card className="col-span-full border-dashed bg-transparent border-gray-200 dark:border-white/10 rounded-2xl">
                         <CardContent className="py-16 text-center">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Tech stack is empty</p>
+                            <p className="font-mono text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Tech stack is empty</p>
                         </CardContent>
                     </Card>
                 )}

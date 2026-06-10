@@ -50,7 +50,7 @@ export const ExperienceList = () => {
             resetForm();
             fetchExperiences();
             toast.success(editingId ? 'Experience updated' : 'Experience added');
-        } catch (err) {
+        } catch {
             toast.error('Failed to save experience');
         } finally {
             setIsSubmitting(false);
@@ -74,7 +74,7 @@ export const ExperienceList = () => {
                 await deleteExperience(id);
                 fetchExperiences();
                 toast.success('Experience deleted');
-            } catch (err) {
+            } catch {
                 toast.error('Failed to delete experience');
             }
         }
@@ -88,13 +88,14 @@ export const ExperienceList = () => {
 
     return (
         <div className="space-y-6">
-            <Card className="border-none shadow-sm bg-white dark:bg-black p-2">
+            <Card className="glass border-none shadow-sm bg-white dark:bg-surface-elevated rounded-2xl p-2">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-900/20">
+                        <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-400/10 ring-1 ring-sky-400/20">
                             <Briefcase className="text-sky-400" size={24} />
                         </div>
                         <div>
+                            <span className="block font-mono text-[10px] tracking-[0.25em] text-sky-400/80 uppercase mb-1">04 — Career</span>
                             <CardTitle className="text-xl font-black tracking-tight uppercase">Experience</CardTitle>
                             <CardDescription className="text-sm text-gray-400 font-medium tracking-tight">Your professional timeline</CardDescription>
                         </div>
@@ -103,7 +104,7 @@ export const ExperienceList = () => {
                         variant="secondary"
                         size="icon"
                         onClick={() => showForm ? resetForm() : setShowForm(true)}
-                        className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/20 h-10 w-10 transition-all active:scale-95"
+                        className="rounded-xl bg-sky-400 hover:bg-sky-500 text-white border-none shadow-lg shadow-sky-400/30 hover:shadow-sky-400/40 h-10 w-10 transition-all active:scale-95 hover:-translate-y-0.5"
                     >
                         {showForm ? <X size={20} /> : <Plus size={20} />}
                     </Button>
@@ -118,7 +119,7 @@ export const ExperienceList = () => {
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
                         className="overflow-hidden"
                     >
-                        <Card className="border-none shadow-sm bg-gray-50/50 dark:bg-black/50 overflow-hidden">
+                        <Card className="glass border-none shadow-sm bg-gray-50/50 dark:bg-surface rounded-2xl overflow-hidden">
                             <CardContent className="p-6">
                                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                                     <div className="space-y-2">
@@ -129,7 +130,7 @@ export const ExperienceList = () => {
                                                 required
                                                 value={formExp.role}
                                                 onChange={(e) => setFormExp({ ...formExp, role: e.target.value })}
-                                                className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400"
+                                                className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                                                 placeholder="e.g. Lead Dev"
                                             />
                                         </div>
@@ -142,7 +143,7 @@ export const ExperienceList = () => {
                                                 required
                                                 value={formExp.company}
                                                 onChange={(e) => setFormExp({ ...formExp, company: e.target.value })}
-                                                className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400"
+                                                className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                                                 placeholder="Company Name"
                                             />
                                         </div>
@@ -155,7 +156,7 @@ export const ExperienceList = () => {
                                                 required
                                                 value={formExp.period}
                                                 onChange={(e) => setFormExp({ ...formExp, period: e.target.value })}
-                                                className="bg-white dark:bg-black border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400"
+                                                className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 h-12 pl-11 text-sm font-bold focus-visible:ring-sky-400 transition-shadow"
                                                 placeholder="e.g. 2022 - Present"
                                             />
                                         </div>
@@ -166,13 +167,13 @@ export const ExperienceList = () => {
                                             required
                                             value={formExp.description}
                                             onChange={(e) => setFormExp({ ...formExp, description: e.target.value })}
-                                            className="bg-white dark:bg-black border-gray-100 dark:border-white/10 min-h-[100px] text-sm focus-visible:ring-sky-400 resize-none"
+                                            className="bg-white dark:bg-surface-elevated border-gray-100 dark:border-white/10 min-h-[100px] text-sm focus-visible:ring-sky-400 resize-none transition-shadow"
                                             placeholder="What did you do there?"
                                         />
                                     </div>
                                     <Button
                                         disabled={isSubmitting}
-                                        className="md:col-span-2 h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white mt-2"
+                                        className="md:col-span-2 h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white mt-2 transition-all active:scale-[0.99] hover:shadow-lg hover:shadow-sky-400/20"
                                     >
                                         {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : (editingId ? 'Update Experience' : 'Add Experience')}
                                     </Button>
@@ -187,10 +188,10 @@ export const ExperienceList = () => {
                 {loading ? (
                     <div className="py-10 flex justify-center"><Loader2 className="animate-spin text-sky-400" size={32} /></div>
                 ) : experiences.map((exp) => (
-                    <Card key={exp.id} className="group border-none shadow-sm bg-white dark:bg-black hover:bg-gray-50/50 dark:hover:bg-white/5 transition-all overflow-hidden">
+                    <Card key={exp.id} className="group border border-transparent dark:border-white/5 shadow-sm bg-white dark:bg-surface hover:bg-gray-50/50 dark:hover:bg-surface-elevated hover:border-sky-400/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden rounded-2xl">
                         <CardContent className="p-4 flex items-center justify-between">
                             <div className="flex items-center gap-4 min-w-0">
-                                <div className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-white/5 flex items-center justify-center shrink-0">
+                                <div className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-surface-elevated border border-gray-100 dark:border-white/5 flex items-center justify-center shrink-0 shadow-inner">
                                     <Building2 className="text-sky-400" size={18} />
                                 </div>
                                 <div className="min-w-0">
@@ -210,9 +211,9 @@ export const ExperienceList = () => {
                     </Card>
                 ))}
                 {!loading && experiences.length === 0 && (
-                    <Card className="border-dashed bg-transparent border-gray-100 dark:border-white/10">
+                    <Card className="border-dashed bg-transparent border-gray-200 dark:border-white/10 rounded-2xl">
                         <CardContent className="py-16 text-center">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Professional path is empty</p>
+                            <p className="font-mono text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">Professional path is empty</p>
                         </CardContent>
                     </Card>
                 )}
