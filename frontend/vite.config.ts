@@ -11,6 +11,9 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,
+    // Allow the public Traefik hostname (mirrors ${HOST:-eric.linkerx.dev} in docker-compose.yml)
+    allowedHosts: [process.env.HOST || 'eric.linkerx.dev'],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
