@@ -28,6 +28,11 @@ services:
       - path: .env.example
       - path: .env
         required: false
+    environment:
+      # Docker bind-mount file events are unreliable on this host, so uvicorn's
+      # --reload (via the watchfiles lib) misses new/changed files. Force polling
+      # so route additions are picked up without a manual restart.
+      - WATCHFILES_FORCE_POLLING=true
 
     depends_on:
       db:
