@@ -19,7 +19,11 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
   const [query, setQuery] = useState('');
 
   // Guard against a non-array body on a 200, matching the original page.
-  const safeProjects = Array.isArray(projects) ? projects : [];
+  // Wrapped in useMemo so deps arrays below track a stable reference.
+  const safeProjects = useMemo(
+    () => (Array.isArray(projects) ? projects : []),
+    [projects]
+  );
 
   const tags = useMemo(() => {
     const set = new Set<string>();
