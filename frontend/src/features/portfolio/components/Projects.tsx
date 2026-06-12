@@ -77,6 +77,7 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search…"
+              aria-label="Search projects"
               className="h-9 w-full md:w-56 rounded-lg border border-gray-200 dark:border-white/10 bg-transparent pl-9 pr-3 font-mono text-xs outline-none placeholder:text-gray-400 focus:border-sky-400/50"
             />
           </div>

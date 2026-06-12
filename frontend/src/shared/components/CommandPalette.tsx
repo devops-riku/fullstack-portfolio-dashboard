@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Command } from 'cmdk';
+import { DialogTitle } from '@radix-ui/react-dialog';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
@@ -80,6 +81,7 @@ export const CommandPalette = () => {
         className="w-full max-w-lg overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-[#0a0a0a] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        <DialogTitle className="sr-only">Command Menu</DialogTitle>
         <Command.Input
           placeholder="Type a command or search…"
           className="w-full border-b border-gray-100 dark:border-white/10 bg-transparent px-5 py-4 text-sm font-medium outline-none placeholder:text-gray-400"
