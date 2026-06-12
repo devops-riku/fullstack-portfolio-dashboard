@@ -113,7 +113,18 @@ export const Navbar = () => {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-2"
         >
-          <Link to="/" className="group flex items-center gap-2">
+          <Link
+            to="/"
+            className="group flex items-center gap-2"
+            onClick={(e) => {
+              if (isPortfolioPage) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                window.scrollTo({ top: 0 });
+              }
+            }}
+          >
             <span className="text-xl font-black tracking-tighter text-black dark:text-white uppercase transition-colors">
               Riku<span className="text-sky-400">.</span>Dev
             </span>
@@ -121,7 +132,7 @@ export const Navbar = () => {
         </motion.div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center glass px-6 py-2 rounded-full gap-8">
+        <div className="hidden md:flex items-center bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm px-6 py-2 rounded-full border border-gray-100 dark:border-white/10 gap-8">
           {navLinks.map((link, i) => {
             const isActive = isPortfolioPage && activeSection === link.id;
             return (
@@ -131,16 +142,14 @@ export const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => scrollToSection(link.id)}
-                className={`text-[10px] font-black tracking-[0.2em] transition-colors relative group uppercase ${
+                className={`font-mono text-[10px] font-semibold tracking-[0.2em] transition-colors relative group uppercase ${
                   isActive ? 'text-sky-400' : 'text-gray-400 hover:text-sky-400'
                 }`}
               >
                 {link.name}
-                {/* Hover underline (suppressed when active to avoid stacking) */}
                 {!isActive && (
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all duration-300 group-hover:w-full" />
                 )}
-                {/* Animated active indicator — slides between links via shared layoutId */}
                 {isActive && (
                   <motion.span
                     layoutId="nav-active-underline"
@@ -151,6 +160,17 @@ export const Navbar = () => {
               </motion.button>
             );
           })}
+          <button
+            onClick={() => {
+              document.dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'k', metaKey: true })
+              );
+            }}
+            className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-gray-400 hover:text-sky-400 transition-colors"
+            aria-label="Open command palette"
+          >
+            ⌘K
+          </button>
         </div>
 
         <div className="flex items-center gap-2">

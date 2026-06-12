@@ -33,8 +33,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-gray-50 dark:bg-black p-4">
-      {/* Layered aurora glow — dark mode only, keeps light mode clean */}
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-paper dark:bg-ink p-4">
+      {/* Aurora glow — dark mode only */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 hidden dark:block"
@@ -43,8 +43,7 @@ export const Login = () => {
         <div className="absolute left-1/2 top-1/3 h-[22rem] w-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/10 blur-3xl animate-aurora" />
       </div>
 
-      <Card className="relative z-10 w-full max-w-md overflow-hidden border-none shadow-2xl glass-strong">
-        {/* Refined top accent bar */}
+      <Card className="relative z-10 w-full max-w-md overflow-hidden border-none shadow-2xl bg-white dark:bg-black">
         <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-sky-400 to-transparent opacity-90"></div>
 
         <CardHeader className="space-y-4 pt-10 pb-6 text-center">
@@ -52,7 +51,7 @@ export const Login = () => {
             <ShieldCheck size={24} />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-black uppercase tracking-tight">Admin Portal</CardTitle>
+            <CardTitle className="font-display text-2xl font-black uppercase tracking-tight text-ink dark:text-paper">Admin Portal</CardTitle>
             <CardDescription className="text-sm font-medium text-muted-foreground">Enter credentials to manage your portfolio</CardDescription>
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/70">
               <span className="text-sky-500 dark:text-sky-400">●</span> Secure Session
@@ -63,7 +62,7 @@ export const Login = () => {
         <CardContent className="px-8 pb-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label className="ml-1 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Email / Username</Label>
+              <Label className="ml-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Email / Username</Label>
               <div className="relative group">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-sky-400" />
                 <Input
@@ -79,7 +78,7 @@ export const Login = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <Label className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Password</Label>
+                <Label className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Password</Label>
               </div>
               <div className="relative group">
                 <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-sky-400" />
@@ -97,7 +96,7 @@ export const Login = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="h-14 w-full rounded-xl bg-black text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-black/5 transition-all hover:bg-sky-500 hover:shadow-sky-500/20 active:scale-[0.98] dark:bg-white dark:text-black dark:hover:bg-sky-400 dark:hover:text-white"
+              className="h-14 w-full rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest shadow-xl shadow-black/5 transition-all hover:bg-sky-400 hover:text-white active:scale-[0.98]"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : "Unlock Dashboard"}
             </Button>

@@ -1,14 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+import path from "path"
+import { fileURLToPath } from "url"
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src"),
     },
+    extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
   },
   server: {
     host: true,
@@ -26,7 +28,7 @@ export default defineConfig({
         // not localhost (which would be the frontend container itself).
         target: process.env.VITE_PROXY_TARGET || 'http://backend:8000',
         changeOrigin: true,
-      }
-    }
-  }
+      },
+    },
+  },
 })

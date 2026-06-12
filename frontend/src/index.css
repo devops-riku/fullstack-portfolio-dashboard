@@ -38,14 +38,13 @@
 }
 
 .dark {
-  /* Layered near-black surfaces — not pure #000, so cards read as layers */
-  --background: 222 14% 5%;        /* ~#0a0b0d page base */
+  --background: 0 0% 4%;            /* ~#0a0a0a ink */
   --foreground: 210 40% 98%;
-  --surface: 222 13% 7%;           /* ~#101114 base card */
-  --surface-elevated: 220 13% 10%; /* ~#15171c raised card */
-  --card: 222 13% 7%;
+  --surface: 222 13% 7%;            /* ~#101114 base card */
+  --surface-elevated: 220 13% 10%;  /* ~#15171c raised card */
+  --card: 0 0% 4%;
   --card-foreground: 210 40% 98%;
-  --popover: 222 14% 6%;
+  --popover: 0 0% 4%;
   --popover-foreground: 210 40% 98%;
   --primary: 210 40% 98%;
   --primary-foreground: 222.2 47.4% 11.2%;
@@ -96,7 +95,17 @@
 
   --color-glow: hsl(var(--glow));
 
-  --font-mono: var(--font-mono);
+  /* Editorial type system */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "Inter", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Editorial palette */
+  --color-ink: #0a0a0a;
+  --color-paper: #fafafa;
+  /* Note: brand accent is applied via Tailwind's sky-400 utilities directly.
+     We intentionally do NOT redefine --color-accent here, to avoid clobbering
+     shadcn's accent token used by Radix dropdown/select hover states. */
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -156,8 +165,14 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply text-foreground transition-colors duration-300;
+    background-color: var(--color-paper);
+    font-family: var(--font-sans);
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  .dark body {
+    background-color: var(--color-ink);
   }
 }
 

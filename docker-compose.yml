@@ -1,26 +1,12 @@
 services:
-  db:
-    image: postgres:15-alpine
-    env_file:
-      - path: .env.example
-      - path: .env
-        required: false
-    volumes:
-      - portfolio_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    
-    networks:
-      - portfolio-internal
-
-  backend:
+  # =========================
+  # API (Backend)
+  # =========================
+  api:
     build:
       context: ./backend
-    # ports:
-    #   - "8000:8000"
+    container_name: portfolio_api
+    restart: always
     volumes:
       - ./backend:/app
       - .:/project_root
@@ -33,56 +19,86 @@ services:
       # --reload (via the watchfiles lib) misses new/changed files. Force polling
       # so route additions are picked up without a manual restart.
       - WATCHFILES_FORCE_POLLING=true
-
     depends_on:
-      db:
+      portfolio_db:
         condition: service_healthy
-    command: sh /app/entrypoint.sh sh -c "alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh /app/entrypoint.sh sh -c "alembic upgrade head && python seed.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
     networks:
       - traefik-proxy
       - portfolio-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/api\")"
-      - "traefik.http.routers.backend.entrypoints=web,websecure"
-      - "traefik.http.routers.backend.tls=true"
-      - "traefik.docker.network=traefik_network"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.docker.network=asseqr-system_app-network"
 
+      - "traefik.http.routers.portfolio-api.rule=Host(`eric.linkerx.dev`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.portfolio-api.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-api.tls=true"
+      - "traefik.http.routers.portfolio-api.priority=100"
+
+      - "traefik.http.services.portfolio-api.loadbalancer.server.port=8000"
+
+  # =========================
+  # Frontend
+  # =========================
   frontend:
     build:
       context: ./frontend
-    # ports:
-    #   - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    env_file:
-      - path: .env.example
-      - path: .env
-        required: false
+      args:
+        - VITE_API_URL=/api
+    container_name: portfolio_frontend
+    restart: always
     depends_on:
-      - backend
+      - api
     networks:
       - traefik-proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(\"${HOST:-eric.linkerx.dev}\") && PathPrefix(\"/\")"
-      - "traefik.http.routers.frontend.entrypoints=web,websecure"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.docker.network=traefik_network"
-      - "traefik.http.services.frontend.loadbalancer.server.port=5173"
+      - "traefik.docker.network=asseqr-system_app-network"
 
-volumes:
-  portfolio_postgres_data:
+      - "traefik.http.routers.portfolio-frontend.rule=Host(`eric.linkerx.dev`)"
+      - "traefik.http.routers.portfolio-frontend.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-frontend.tls=true"
+      - "traefik.http.routers.portfolio-frontend.priority=10"
 
+      - "traefik.http.services.portfolio-frontend.loadbalancer.server.port=80"
 
+  # =========================
+  # Postgres (PRIVATE)
+  # =========================
+  portfolio_db:
+    image: postgres:15-alpine
+    container_name: portfolio_db
+    restart: always
+    environment:
+      POSTGRES_DB: portfolio_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: riku
+    volumes:
+      - portfolio_pgdata_v2:/var/lib/postgresql/data
+    networks:
+      - portfolio-internal
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d portfolio_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# =========================
+# Networks
+# =========================
 networks:
   # Shared Traefik network (from App 1)
   traefik-proxy:
     external: true
     name: asseqr-system_app-network
 
-  # Local network for this app
+  # Private network for API + DB
   portfolio-internal:
     driver: bridge
+
+# =========================
+# Volumes
+# =========================
+volumes:
+  portfolio_pgdata_v2:

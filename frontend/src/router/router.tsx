@@ -6,6 +6,7 @@ import { ProjectList } from '../features/projects/pages/ProjectList';
 import { UserProfile } from '../features/users/pages/UserProfile';
 import { Portfolio } from '../features/portfolio/pages/Portfolio';
 
+// eslint-disable-next-line react-refresh/only-export-components
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (!localStorage.getItem('token')) {
     return <Navigate to="/login" replace />;
