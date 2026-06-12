@@ -28,11 +28,11 @@
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
+  --background: 0 0% 4%;   /* ~#0a0a0a ink */
   --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
+  --card: 0 0% 4%;
   --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
+  --popover: 0 0% 4%;
   --popover-foreground: 210 40% 98%;
   --primary: 210 40% 98%;
   --primary-foreground: 222.2 47.4% 11.2%;
@@ -77,6 +77,16 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Editorial type system */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "Inter", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  /* Editorial palette */
+  --color-ink: #0a0a0a;
+  --color-paper: #fafafa;
+  --color-accent: #38bdf8;
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -111,8 +121,14 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply text-foreground transition-colors duration-300;
+    background-color: var(--color-paper);
+    font-family: var(--font-sans);
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  .dark body {
+    background-color: var(--color-ink);
   }
 }
 
@@ -136,4 +152,16 @@
 
 [data-sonner-toast] [data-error-icon] {
   color: #fff !important;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
