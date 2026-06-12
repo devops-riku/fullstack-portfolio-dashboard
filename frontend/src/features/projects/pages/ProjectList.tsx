@@ -34,8 +34,8 @@ export const ProjectList = () => {
       setLoading(true);
       const data = await getProjects();
       setProjects(data);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      console.error('Failed to fetch projects');
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ export const ProjectList = () => {
       resetForm();
       fetchProjects();
       toast.success(editingId ? 'Project updated' : 'Project published');
-    } catch (error) {
+    } catch {
       toast.error('Failed to save project');
     } finally {
       setIsSubmitting(false);
@@ -83,7 +83,7 @@ export const ProjectList = () => {
         await deleteProject(id);
         setProjects(projects.filter(p => p.id !== id));
         toast.success('Project deleted');
-      } catch (error) {
+      } catch {
         toast.error('Failed to delete project');
       }
     }
@@ -117,7 +117,7 @@ export const ProjectList = () => {
                 <LayoutTemplate className="text-sky-400" size={24} />
               </div>
               <div>
-                <CardTitle className="text-xl font-black tracking-tight uppercase">Projects</CardTitle>
+                <CardTitle className="font-display text-xl font-black tracking-tight uppercase">Projects</CardTitle>
                 <CardDescription className="text-sm text-gray-400 font-medium tracking-tight">Manage your work portfolio</CardDescription>
               </div>
             </div>
@@ -144,7 +144,7 @@ export const ProjectList = () => {
                 <CardContent className="p-6">
                   <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Title</Label>
+                      <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Title</Label>
                       <Input
                         required
                         value={formProject.title}
@@ -154,7 +154,7 @@ export const ProjectList = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Image URL</Label>
+                      <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Image URL</Label>
                       <div className="relative group">
                         <ImageIcon size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                         <Input
@@ -166,7 +166,7 @@ export const ProjectList = () => {
                       </div>
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Description</Label>
+                      <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Description</Label>
                       <Textarea
                         required
                         value={formProject.description}
@@ -176,7 +176,7 @@ export const ProjectList = () => {
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">GitHub / Demo Link</Label>
+                      <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">GitHub / Demo Link</Label>
                       <div className="relative group">
                         <Github size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                         <Input
@@ -190,7 +190,7 @@ export const ProjectList = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="md:col-span-2 h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white mt-4"
+                      className="md:col-span-2 h-14 rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest hover:bg-sky-400 hover:text-white mt-4"
                     >
                       {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : (editingId ? <Save size={16} /> : <Plus size={16} />)}
                       {editingId ? 'Update Project' : 'Publish Project'}

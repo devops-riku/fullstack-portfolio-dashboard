@@ -39,7 +39,7 @@ export const UserProfile = () => {
             const updated = await updateMe({ full_name: fullName });
             setUser(updated);
             toast.success('Full name updated successfully');
-        } catch (err) {
+        } catch {
             toast.error('Failed to update profile');
         } finally {
             setUpdatingProfile(false);
@@ -54,7 +54,7 @@ export const UserProfile = () => {
             await updateMe({ email: newEmail });
             localStorage.removeItem('token');
             window.location.href = '/login';
-        } catch (err) {
+        } catch {
             toast.error('Failed to update email. It might already be in use.');
         } finally {
             setUpdatingEmail(false);
@@ -69,7 +69,7 @@ export const UserProfile = () => {
             await updateMe({ password: newPassword });
             setNewPassword('');
             toast.success('Password updated successfully');
-        } catch (err) {
+        } catch {
             toast.error('Failed to update password');
         } finally {
             setUpdatingPassword(false);
@@ -112,7 +112,7 @@ export const UserProfile = () => {
                     </div>
                 </div>
                 <div>
-                    <h1 className="text-xl font-black uppercase tracking-tight text-black dark:text-white">
+                    <h1 className="font-display text-xl font-black uppercase tracking-tight text-ink dark:text-paper">
                         {user.full_name || 'Anonymous'}
                     </h1>
                     <div className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
@@ -130,7 +130,7 @@ export const UserProfile = () => {
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() => setActiveTab(tab.id as 'profile' | 'security')}
                             className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${isActive ? 'text-black dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
                                 }`}
                         >
@@ -160,12 +160,12 @@ export const UserProfile = () => {
                     {activeTab === 'profile' ? (
                         <Card className="border-none shadow-sm bg-white dark:bg-black p-4 md:p-8 rounded-[2rem]">
                             <CardHeader className="px-0 pt-0">
-                                <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Profile Settings</CardTitle>
+                                <CardTitle className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 mb-6">Profile Settings</CardTitle>
                             </CardHeader>
                             <CardContent className="px-0 pb-0">
                                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Full Identity Name</Label>
+                                        <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Full Identity Name</Label>
                                         <div className="relative group">
                                             <EditUser size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                                             <Input
@@ -179,7 +179,7 @@ export const UserProfile = () => {
                                     <Button
                                         type="submit"
                                         disabled={updatingProfile}
-                                        className="h-14 px-8 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
+                                        className="h-14 px-8 rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest hover:bg-sky-400 hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
                                     >
                                         {updatingProfile ? <Loader2 className="animate-spin" size={16} /> : <><Save className="mr-2" size={16} /> Save Changes</>}
                                     </Button>
@@ -189,12 +189,12 @@ export const UserProfile = () => {
                     ) : (
                         <Card className="border-none shadow-sm bg-white dark:bg-black p-4 md:p-8 rounded-[2rem]">
                             <CardHeader className="px-0 pt-0">
-                                <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Credential Management</CardTitle>
+                                <CardTitle className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 mb-6">Credential Management</CardTitle>
                             </CardHeader>
                             <CardContent className="px-0 pb-0 space-y-10">
                                 <form onSubmit={handleUpdateEmail} className="space-y-6">
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Primary Email Access</Label>
+                                        <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Primary Email Access</Label>
                                         <div className="relative group">
                                             <Mail size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                                             <Input
@@ -210,7 +210,7 @@ export const UserProfile = () => {
                                         <Button
                                             type="submit"
                                             disabled={updatingEmail || newEmail === user.email}
-                                            className="h-14 px-8 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
+                                            className="h-14 px-8 rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest hover:bg-sky-400 hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
                                         >
                                             {updatingEmail ? <Loader2 className="animate-spin" size={16} /> : <><Mail className="mr-2" size={16} /> Update Primary Email</>}
                                         </Button>
@@ -224,7 +224,7 @@ export const UserProfile = () => {
 
                                 <form onSubmit={handleUpdatePassword} className="space-y-6">
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-wider text-gray-400 ml-1">Update Security Key</Label>
+                                        <Label className="font-mono text-[10px] font-semibold uppercase tracking-wider text-gray-400 ml-1">Update Security Key</Label>
                                         <div className="relative group">
                                             <Key size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                                             <Input
@@ -239,7 +239,7 @@ export const UserProfile = () => {
                                     <Button
                                         type="submit"
                                         disabled={updatingPassword || !newPassword}
-                                        className="h-14 px-8 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
+                                        className="h-14 px-8 rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest hover:bg-sky-400 hover:text-white transition-all shadow-xl shadow-sky-500/10 active:scale-95"
                                     >
                                         {updatingPassword ? <Loader2 className="animate-spin" size={16} /> : <><Key className="mr-2" size={16} /> Change Password</>}
                                     </Button>
