@@ -112,12 +112,23 @@ export const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               onClick={() => scrollToSection(link.id)}
-              className="text-[10px] font-black tracking-[0.2em] text-gray-400 hover:text-sky-400 transition-colors relative group uppercase"
+              className="font-mono text-[10px] font-semibold tracking-[0.2em] text-gray-400 hover:text-sky-400 transition-colors relative group uppercase"
             >
               {link.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all duration-300 group-hover:w-full" />
             </motion.button>
           ))}
+          <button
+            onClick={() => {
+              document.dispatchEvent(
+                new KeyboardEvent('keydown', { key: 'k', metaKey: true })
+              );
+            }}
+            className="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-gray-400 hover:text-sky-400 transition-colors"
+            aria-label="Open command palette"
+          >
+            ⌘K
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
