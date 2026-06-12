@@ -85,7 +85,9 @@
   /* Editorial palette */
   --color-ink: #0a0a0a;
   --color-paper: #fafafa;
-  --color-accent: #38bdf8;
+  /* Note: brand accent is applied via Tailwind's sky-400 utilities directly.
+     We intentionally do NOT redefine --color-accent here, to avoid clobbering
+     shadcn's accent token used by Radix dropdown/select hover states. */
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
