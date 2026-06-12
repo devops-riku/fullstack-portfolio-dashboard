@@ -142,6 +142,16 @@ Replace the `body` rule inside `@layer base` (currently lines 113-116) with:
   }
 ```
 
+Then, so cards/popovers don't stack a second, lighter navy dark on top of the new ink
+surface, align the existing dark card/background/popover tokens to ink. In the `.dark { ... }`
+block (lines 30-50), change these three values:
+
+```css
+  --background: 0 0% 4%;   /* ~#0a0a0a ink */
+  --card: 0 0% 4%;
+  --popover: 0 0% 4%;
+```
+
 - [ ] **Step 3: Add a reduced-motion guard at the end of the file**
 
 Append to the end of `frontend/src/index.css`:
@@ -158,12 +168,11 @@ Append to the end of `frontend/src/index.css`:
     scroll-behavior: auto !important;
   }
 }
-
-/* Editorial utility helpers */
-.font-display { font-family: var(--font-display); }
-.font-mono { font-family: var(--font-mono); }
-.text-balance { text-wrap: balance; }
 ```
+
+Note: do NOT hand-write `.font-display` / `.font-mono` / `.text-balance` — Tailwind v4
+generates `font-display`, `font-mono`, `font-sans` utilities from the `--font-*` theme
+tokens above, and `text-balance` is a built-in utility.
 
 - [ ] **Step 4: Build to verify Tailwind compiles the tokens**
 
@@ -420,6 +429,7 @@ export const CommandPalette = () => {
       open={open}
       onOpenChange={setOpen}
       label="Command Menu"
+      onClick={() => setOpen(false)}
       className="fixed inset-0 z-[120] flex items-start justify-center p-4 pt-[18vh] bg-black/40 backdrop-blur-sm data-[state=closed]:hidden"
     >
       <div
@@ -856,7 +866,10 @@ const CATEGORY_COLOR: Record<string, string> = {
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const TechStack = ({ skills }: TechStackProps) => {
-  const categories = Array.from(new Set((skills || []).map((s) => s.category || 'other')));
+  // Guard against a non-array body on a 200 (error envelope), matching the
+  // original page's defensive Array.isArray checks.
+  const safeSkills = Array.isArray(skills) ? skills : [];
+  const categories = Array.from(new Set(safeSkills.map((s) => s.category || 'other')));
 
   return (
     <motion.section
@@ -868,12 +881,12 @@ export const TechStack = ({ skills }: TechStackProps) => {
       className="scroll-mt-32"
     >
       <SectionHeader index="01" title="Tech Stack" />
-      {(!skills || skills.length === 0) ? (
+      {safeSkills.length === 0 ? (
         <p className="font-mono text-[11px] uppercase tracking-widest text-gray-400">Waiting for tools…</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
           {categories.map((catId) => {
-            const catSkills = skills.filter((s) => (s.category || 'other') === catId);
+            const catSkills = safeSkills.filter((s) => (s.category || 'other') === catId);
             if (catSkills.length === 0) return null;
             return (
               <div key={catId} className="space-y-4">
@@ -1018,15 +1031,18 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
   const [activeTag, setActiveTag] = useState<string>('all');
   const [query, setQuery] = useState('');
 
+  // Guard against a non-array body on a 200, matching the original page.
+  const safeProjects = Array.isArray(projects) ? projects : [];
+
   const tags = useMemo(() => {
     const set = new Set<string>();
-    (projects || []).forEach((p) => (p.tags || []).forEach((t) => set.add(t)));
+    safeProjects.forEach((p) => (p.tags || []).forEach((t) => set.add(t)));
     return ['all', ...Array.from(set)];
-  }, [projects]);
+  }, [safeProjects]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return (projects || []).filter((p) => {
+    return safeProjects.filter((p) => {
       const tagOk = activeTag === 'all' || (p.tags || []).includes(activeTag);
       const textOk = !q ||
         p.title?.toLowerCase().includes(q) ||
@@ -1034,7 +1050,7 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
         (p.tags || []).some((t) => t.toLowerCase().includes(q));
       return tagOk && textOk;
     });
-  }, [projects, activeTag, query]);
+  }, [safeProjects, activeTag, query]);
 
   return (
     <motion.section
@@ -1047,7 +1063,7 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
     >
       <SectionHeader index="02" title="Selected Work" />
 
-      {!loading && projects.length > 0 && (
+      {!loading && safeProjects.length > 0 && (
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
@@ -1143,7 +1159,7 @@ export const Projects = ({ projects, loading, onOpen }: ProjectsProps) => {
       ) : (
         <div className="rounded-3xl border-2 border-dashed border-gray-200 py-20 text-center dark:border-white/10">
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-gray-400">
-            {projects.length === 0 ? 'Workshop is currently empty' : 'No projects match'}
+            {safeProjects.length === 0 ? 'Workshop is currently empty' : 'No projects match'}
           </p>
         </div>
       )}
@@ -1502,6 +1518,10 @@ git commit -m "style: editorial re-skin of dashboard editors"
 
 **Files:** none (verification only)
 
+> **Do not declare the redesign "done" on a green `build` + `lint` alone.** The deliverable
+> is visual/interactive; build and lint pass whether the UI looks polished or is visibly
+> broken. Completion requires the visual pass in Task 23 in addition to this task.
+
 - [ ] **Step 1: Clean build + lint**
 
 Run (from `frontend/`): `npm run build && npm run lint`
@@ -1531,6 +1551,56 @@ Run: `npm run dev` and open the served URL. Confirm each item:
 git add -A
 git commit -m "fix: manual QA adjustments for editorial redesign"
 ```
+
+---
+
+## Task 23: Agent-driven visual verification (gate for "done")
+
+**Files:** none (visual QA; may produce follow-up fix commits)
+
+Build + lint cannot see the actual deliverable. This task drives the running app and
+inspects it visually, then fixes what it finds. The `gstack` `browse`, `qa`, and
+`design-review` skills are available in this environment and should be used here.
+
+- [ ] **Step 1: Start the dev server**
+
+Run (from `frontend/`): `npm run dev` (note the served URL, e.g. http://localhost:5173).
+
+- [ ] **Step 2: Drive the app and capture each surface**
+
+Using the `browse` skill (headless browser), load the URL and capture screenshots of:
+home/hero (light AND dark), tech stack, projects (default + one tag filtered + a search
+query + the open project modal), experience, contact, the open ⌘K command palette, the
+login page, and the dashboard (ProjectList) + profile pages after logging in.
+
+For each capture, confirm against the spec's Editorial/Swiss intent:
+- Archivo display headlines and Geist Mono labels actually render (not fallback system fonts).
+- Single accent (sky) used sparingly; one consistent dark surface (no navy-on-ink stacking).
+- Hierarchy, alignment to the grid, and spacing read as deliberate — no overlap, no clipping,
+  no AI-slop uniformity.
+
+- [ ] **Step 3: Run the design-review skill**
+
+Invoke the `design-review` skill against the running app. It finds visual inconsistency,
+spacing/hierarchy problems, AI-slop patterns, and slow interactions — and fixes them.
+Apply its fixes.
+
+- [ ] **Step 4: Verify the interactions live**
+
+In the driven browser, confirm: ⌘K opens and closes (Escape, backdrop click, and the
+navbar ⌘K button); palette Navigate scrolls; Toggle theme persists across reload; Copy
+email toasts; project tag filter animates the grid; reduced-motion (emulate via the
+browser's `prefers-reduced-motion`) freezes the rotating word and disables magnetic drift.
+
+- [ ] **Step 5: Re-run build + lint after any fixes, then commit**
+
+Run: `npm run build && npm run lint`
+```bash
+git add -A
+git commit -m "fix: visual QA pass for editorial redesign"
+```
+
+Only after Tasks 22 and 23 both pass is the redesign complete.
 
 ---
 
