@@ -25,7 +25,7 @@ export const Login = () => {
       const { access_token } = await login(params);
       localStorage.setItem('token', access_token);
       navigate('/dashboard');
-    } catch (error) {
+    } catch {
       toast.error('Login failed');
     } finally {
       setLoading(false);
@@ -33,7 +33,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-gray-50 dark:bg-black p-4">
+    <div className="flex min-h-[100dvh] items-center justify-center bg-paper dark:bg-ink p-4">
       <Card className="w-full max-w-md border-none shadow-2xl bg-white dark:bg-black overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600"></div>
 
@@ -42,7 +42,7 @@ export const Login = () => {
             <Lock size={24} />
           </div>
           <div>
-            <CardTitle className="text-2xl font-black uppercase tracking-tight">Admin Portal</CardTitle>
+            <CardTitle className="font-display text-2xl font-black uppercase tracking-tight text-ink dark:text-paper">Admin Portal</CardTitle>
             <CardDescription className="text-sm font-medium text-gray-400">Enter credentials to manage your portfolio</CardDescription>
           </div>
         </CardHeader>
@@ -50,7 +50,7 @@ export const Login = () => {
         <CardContent className="px-8 pb-10">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Email / Username</Label>
+              <Label className="ml-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">Email / Username</Label>
               <div className="relative group">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
                 <Input
@@ -66,7 +66,7 @@ export const Login = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Password</Label>
+                <Label className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">Password</Label>
               </div>
               <div className="relative group">
                 <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-sky-400 transition-colors" />
@@ -84,7 +84,7 @@ export const Login = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-black dark:bg-white text-white dark:text-black font-black uppercase tracking-widest text-xs rounded-xl shadow-xl shadow-black/5 hover:bg-sky-400 dark:hover:bg-sky-400 dark:hover:text-white transition-all transform active:scale-[0.98]"
+              className="h-14 w-full rounded-xl bg-ink dark:bg-paper text-paper dark:text-ink font-mono text-xs font-semibold uppercase tracking-widest shadow-xl shadow-black/5 transition-all hover:bg-sky-400 hover:text-white active:scale-[0.98]"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : "Unlock Dashboard"}
             </Button>
