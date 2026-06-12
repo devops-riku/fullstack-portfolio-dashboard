@@ -42,7 +42,7 @@ export const ProfileEditor = () => {
                 setProfile({ ...profile, bio });
                 toast.success('Bio improved by AI! ✨');
             }
-        } catch (err) {
+        } catch {
             toast.error('AI is currently unavailable');
         } finally {
             setGenerating(false);
@@ -56,7 +56,7 @@ export const ProfileEditor = () => {
         try {
             await updateProfile(profile);
             toast.success('Profile identity synced!');
-        } catch (err) {
+        } catch {
             toast.error('Failed to sync profile');
         } finally {
             setSaving(false);

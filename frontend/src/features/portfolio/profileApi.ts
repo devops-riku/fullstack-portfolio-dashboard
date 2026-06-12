@@ -18,7 +18,8 @@ export const getProfile = async (): Promise<Profile> => {
 
 export const updateProfile = async (profile: Partial<Profile>): Promise<Profile> => {
     // Remove ID if present to match backend schema expectations
-    const { id, ...data } = profile;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, ...data } = profile;
     const response = await apiClient.put('/profile', data);
     return response.data;
 };

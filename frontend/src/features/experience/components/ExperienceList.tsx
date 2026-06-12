@@ -50,7 +50,7 @@ export const ExperienceList = () => {
             resetForm();
             fetchExperiences();
             toast.success(editingId ? 'Experience updated' : 'Experience added');
-        } catch (err) {
+        } catch {
             toast.error('Failed to save experience');
         } finally {
             setIsSubmitting(false);
@@ -74,7 +74,7 @@ export const ExperienceList = () => {
                 await deleteExperience(id);
                 fetchExperiences();
                 toast.success('Experience deleted');
-            } catch (err) {
+            } catch {
                 toast.error('Failed to delete experience');
             }
         }
