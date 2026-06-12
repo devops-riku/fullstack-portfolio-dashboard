@@ -199,9 +199,9 @@ export const Navbar = () => {
                   <LayoutDashboard size={18} className="text-gray-400 group-hover:text-sky-400 transition-colors" />
                   <span className="text-xs font-black uppercase tracking-wider">Dashboard</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/profile')} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                <DropdownMenuItem onClick={() => navigate('/dashboard/account')} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
                   <UserIcon size={18} className="text-gray-400 group-hover:text-sky-400 transition-colors" />
-                  <span className="text-xs font-black uppercase tracking-wider">Profile</span>
+                  <span className="text-xs font-black uppercase tracking-wider">Account</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-gray-100 dark:bg-white/10 my-1" />
                 <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group text-red-500">
